@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29102.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wave_Algorithm", "Wave_Algorithm\Wave_Algorithm.csproj", "{B3FDF1F8-4001-4D50-AAB5-C6C7984F731C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B3FDF1F8-4001-4D50-AAB5-C6C7984F731C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3FDF1F8-4001-4D50-AAB5-C6C7984F731C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3FDF1F8-4001-4D50-AAB5-C6C7984F731C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3FDF1F8-4001-4D50-AAB5-C6C7984F731C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6D9BB1E0-0321-4294-ADAB-1A8194FEBD22}
+	EndGlobalSection
+EndGlobal
