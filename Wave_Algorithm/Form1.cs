@@ -1,7 +1,7 @@
-﻿using System;
+﻿using GraphModel;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace Wave_Algorithm
@@ -10,46 +10,80 @@ namespace Wave_Algorithm
     {
         private static List<string> chainList = new List<string>();       
 
-        Bitmap bitmap;
-        Pen blackPen;
-        Pen redPen;
-        Pen darkGoldPen;
-        Graphics gr;
-        Font fo;
-        Brush br;
-        PointF point;
-        public int R = 20; //радиус окружности вершины
+        private Bitmap bitmap;
+        private Pen blackPen;
+        private Pen redPen;
+        private Pen darkGoldPen;
+        private Graphics graphics;
+        private Font font;
+        private Brush brush;
+        private PointF point;
+        private int R = 20; //радиус окружности вершины
 
-        List<Vertex> V;
-        List<Edge> E;
+        private FieldGraph fieldGraph;
 
-        int selected1; //выбранные вершины, для соединения линиями
-        int selected2;
+        private Vertex selected1; //выбранные вершины, для соединения линиями
+        private Vertex selected2;
+
+
         public Form1()
         {
             InitializeComponent();
+
             bitmap = new Bitmap(pictureBox1.Width, pictureBox1.Height);
-            gr = Graphics.FromImage(bitmap);
-            gr.Clear(Color.White);
-            blackPen = new Pen(Color.Black);
-            blackPen.Width = 2;
-            redPen = new Pen(Color.Red);
-            redPen.Width = 2;
-            darkGoldPen = new Pen(Color.DarkGoldenrod);
-            darkGoldPen.Width = 2;
-            fo = new Font("Arial", 15);
-            br = Brushes.Black;
-            V = new List<Vertex>();
-            E = new List<Edge>();
+            graphics = Graphics.FromImage(bitmap);
+            graphics.Clear(Color.White);
+            blackPen = new Pen(Color.Black)
+            {
+                Width = 2
+            };
+            redPen = new Pen(Color.Red)
+            {
+                Width = 2
+            };
+            darkGoldPen = new Pen(Color.DarkGoldenrod)
+            {
+                Width = 2
+            };
+            font = new Font("Arial", 15);
+            brush = Brushes.Black;
+
+            fieldGraph = new FieldGraph();
             pictureBox1.Image = bitmap;
         }
+
+        private void DrawVertex(int x, int y, string number)
+        {
+            graphics.FillEllipse(Brushes.White, (x - R), (y - R), 2 * R, 2 * R);
+            graphics.DrawEllipse(blackPen, (x - R), (y - R), 2 * R, 2 * R);
+            point = new PointF(x - 9, y - 9);
+            graphics.DrawString(number, fo, br, point);
+        }
+
+        private void DrawEdge(Vertex V1, Vertex V2, Edge E)
+        {
+            if (E.v1 == E.v2)
+            {
+                graphics.DrawArc(darkGoldPen, (V1.x - 2 * R), (V1.y - 2 * R), 2 * R, 2 * R, 90, 270);
+                point = new PointF(V1.x - (int)(2.75 * R), V1.y - (int)(2.75 * R));
+                DrawVertex(V1.x, V1.y, (E.v1 + 1).ToString());
+            }
+            else
+            {
+                graphics.DrawLine(darkGoldPen, V1.x, V1.y, V2.x, V2.y);
+                point = new PointF((V1.x + V2.x) / 2, (V1.y + V2.y) / 2);
+                DrawVertex(V1.x, V1.y, (E.v1 + 1).ToString());
+                DrawVertex(V2.x, V2.y, (E.v2 + 1).ToString());
+            }
+        }
+
         private void DrawVertexButton2_Click(object sender, EventArgs e) //кнопка - рисовать вершину
         {
             button2.Enabled = false;
             button3.Enabled = true;
             button4.Enabled = true;
-            gr.Clear(Color.White);
-            DrawALLGraph(V, E);
+            graphics.Clear(Color.White);
+            DrawALLGraph(verticies, E);
             pictureBox1.Image = bitmap;
         }
         private void DrawEdgeButton3_Click(object sender, EventArgs e) //кнопка - рисовать ребро
@@ -58,18 +92,19 @@ namespace Wave_Algorithm
             button2.Enabled = true;
             button4.Enabled = true;
             gr.Clear(Color.White);
-            DrawALLGraph(V, E);
+            DrawALLGraph(verticies, E);
             pictureBox1.Image = bitmap;
             selected1 = -1;
             selected2 = -1;
         }
+
         private void DeleteButton4_Click(object sender, EventArgs e) //кнопка - удалить элемент
         {
             button4.Enabled = false;
             button2.Enabled = true;
             button3.Enabled = true;
             gr.Clear(Color.White);
-            DrawALLGraph(V, E);
+            DrawALLGraph(verticies, E);
             pictureBox1.Image = bitmap;
         }
         private void DeleteALLButton_Click(object sender, EventArgs e) //кнопка - удалить граф
@@ -79,7 +114,7 @@ namespace Wave_Algorithm
             var MBSave = MessageBox.Show(message, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
             if (MBSave == DialogResult.Yes)
             {
-                V.Clear();
+                verticies.Clear();
                 E.Clear();
                 gr.Clear(Color.White);
                 pictureBox1.Image = bitmap;
@@ -90,8 +125,8 @@ namespace Wave_Algorithm
             //нажата кнопка "рисовать вершину"
             if (button2.Enabled == false)
             {
-                V.Add(new Vertex(e.X, e.Y));
-                DrawVertex(e.X, e.Y, V.Count.ToString());
+                verticies.Add(new Vertex(new GraphModel.Point(e.X, e.Y)));
+                DrawVertex(e.X, e.Y, verticies.Count.ToString());
                 pictureBox1.Image = bitmap;
             }
             //нажата кнопка "рисовать ребро"
@@ -99,23 +134,23 @@ namespace Wave_Algorithm
             {
                 if (e.Button == MouseButtons.Left)
                 {
-                    for (int i = 0; i < V.Count; i++)
+                    for (int i = 0; i < verticies.Count; i++)
                     {
-                        if (Math.Pow((V[i].x - e.X), 2) + Math.Pow((V[i].y - e.Y), 2) <= R * R)
+                        if (Math.Pow((verticies[i].x - e.X), 2) + Math.Pow((verticies[i].y - e.Y), 2) <= R * R)
                         {
                             if (selected1 == -1)
                             {
-                                gr.DrawEllipse(redPen, (V[i].x - R), (V[i].y - R), 2 * R, 2 * R);
+                                gr.DrawEllipse(redPen, (verticies[i].x - R), (verticies[i].y - R), 2 * R, 2 * R);
                                 selected1 = i;
                                 pictureBox1.Image = bitmap;
                                 break;
                             }
                             if (selected2 == -1)
                             {
-                                gr.DrawEllipse(redPen, (V[i].x - R), (V[i].y - R), 2 * R, 2 * R);
+                                gr.DrawEllipse(redPen, (verticies[i].x - R), (verticies[i].y - R), 2 * R, 2 * R);
                                 selected2 = i;
                                 E.Add(new Edge(selected1, selected2));
-                                DrawEdge(V[selected1], V[selected2], E[E.Count - 1]);
+                                DrawEdge(verticies[selected1], verticies[selected2], E[E.Count - 1]);
                                 selected1 = -1;
                                 selected2 = -1;
                                 pictureBox1.Image = bitmap;
@@ -127,9 +162,9 @@ namespace Wave_Algorithm
                 if (e.Button == MouseButtons.Right)
                 {
                     if ((selected1 != -1) &&
-                        (Math.Pow((V[selected1].x - e.X), 2) + Math.Pow((V[selected1].y - e.Y), 2) <= R * R))
+                        (Math.Pow((verticies[selected1].x - e.X), 2) + Math.Pow((verticies[selected1].y - e.Y), 2) <= R * R))
                     {
-                        DrawVertex(V[selected1].x, V[selected1].y, (selected1 + 1).ToString());
+                        DrawVertex(verticies[selected1].x, verticies[selected1].y, (selected1 + 1).ToString());
                         selected1 = -1;
                         pictureBox1.Image = bitmap;
                     }
@@ -140,9 +175,9 @@ namespace Wave_Algorithm
             {
                 bool flag = false; //удалили ли что-нибудь по ЭТОМУ клику
                 //ищем, возможно была нажата вершина
-                for (int i = 0; i < V.Count; i++)
+                for (int i = 0; i < verticies.Count; i++)
                 {
-                    if (Math.Pow((V[i].x - e.X), 2) + Math.Pow((V[i].y - e.Y), 2) <= R * R)
+                    if (Math.Pow((verticies[i].x - e.X), 2) + Math.Pow((verticies[i].y - e.Y), 2) <= R * R)
                     {
                         for (int j = 0; j < E.Count; j++)
                         {
@@ -157,7 +192,7 @@ namespace Wave_Algorithm
                                 if (E[j].v2 > i) E[j].v2--;
                             }
                         }
-                        V.RemoveAt(i);
+                        verticies.RemoveAt(i);
                         flag = true;
                         break;
                     }
@@ -169,8 +204,8 @@ namespace Wave_Algorithm
                     {
                         if (E[i].v1 == E[i].v2) //если это петля
                         {
-                            if ((Math.Pow((V[E[i].v1].x - R - e.X), 2) + Math.Pow((V[E[i].v1].y - R - e.Y), 2) <= ((R + 2) * (R + 2))) &&
-                                (Math.Pow((V[E[i].v1].x - R - e.X), 2) + Math.Pow((V[E[i].v1].y - R - e.Y), 2) >= ((R - 2) * (R - 2))))
+                            if ((Math.Pow(verticies[E[i].v1].x - R - e.X, 2) + Math.Pow((verticies[E[i].v1].y - R - e.Y), 2) <= ((R + 2) * (R + 2))) &&
+                                (Math.Pow((verticies[E[i].v1].x - R - e.X), 2) + Math.Pow((verticies[E[i].v1].y - R - e.Y), 2) >= ((R - 2) * (R - 2))))
                             {
                                 E.RemoveAt(i);
                                 flag = true;
@@ -179,11 +214,11 @@ namespace Wave_Algorithm
                         }
                         else //не петля
                         {
-                            if (((e.X - V[E[i].v1].x) * (V[E[i].v2].y - V[E[i].v1].y) / (V[E[i].v2].x - V[E[i].v1].x) + V[E[i].v1].y) <= (e.Y + 4) &&
-                                ((e.X - V[E[i].v1].x) * (V[E[i].v2].y - V[E[i].v1].y) / (V[E[i].v2].x - V[E[i].v1].x) + V[E[i].v1].y) >= (e.Y - 4))
+                            if (((e.X - verticies[E[i].v1].x) * (verticies[E[i].v2].y - verticies[E[i].v1].y) / (verticies[E[i].v2].x - verticies[E[i].v1].x) + verticies[E[i].v1].y) <= (e.Y + 4) &&
+                                ((e.X - verticies[E[i].v1].x) * (verticies[E[i].v2].y - verticies[E[i].v1].y) / (verticies[E[i].v2].x - verticies[E[i].v1].x) + verticies[E[i].v1].y) >= (e.Y - 4))
                             {
-                                if ((V[E[i].v1].x <= V[E[i].v2].x && V[E[i].v1].x <= e.X && e.X <= V[E[i].v2].x) ||
-                                    (V[E[i].v1].x >= V[E[i].v2].x && V[E[i].v1].x >= e.X && e.X >= V[E[i].v2].x))
+                                if ((verticies[E[i].v1].x <= verticies[E[i].v2].x && verticies[E[i].v1].x <= e.X && e.X <= verticies[E[i].v2].x) ||
+                                    (verticies[E[i].v1].x >= verticies[E[i].v2].x && verticies[E[i].v1].x >= e.X && e.X >= verticies[E[i].v2].x))
                                 {
                                     E.RemoveAt(i);
                                     flag = true;
@@ -197,79 +232,12 @@ namespace Wave_Algorithm
                 if (flag)
                 {
                     gr.Clear(Color.White);
-                    DrawALLGraph(V, E);
+                    DrawALLGraph(verticies, E);
                     pictureBox1.Image = bitmap;
                 }
             }
         }
-        private void SaveButton_Click(object sender, EventArgs e) //кнопка - сохранить граф
-        {
-            if (pictureBox1.Image != null)
-            {
-                SaveFileDialog savedialog = new SaveFileDialog();
-                savedialog.Title = "Сохранить картинку как...";
-                savedialog.OverwritePrompt = true;
-                savedialog.CheckPathExists = true;
-                savedialog.Filter = "Image Files(*.BMP)|*.BMP|Image Files(*.JPG)|*.JPG|Image Files(*.GIF)|*.GIF|Image Files(*.PNG)|*.PNG|All files (*.*)|*.*";
-                savedialog.ShowHelp = true;
-                if (savedialog.ShowDialog() == DialogResult.OK)
-                {
-                    try
-                    {
-                        pictureBox1.Image.Save(savedialog.FileName, System.Drawing.Imaging.ImageFormat.Jpeg);
-                    }
-                    catch
-                    {
-                        MessageBox.Show("Невозможно сохранить изображение", "Ошибка",
-                        MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                }
-            }
-        }
-        private void LoadButton_Click(object sender, EventArgs e) //кнопка - загрузить граф
-        {
-            OpenFileDialog open_dialog = new OpenFileDialog(); //создание диалогового окна для выбора файла
-            open_dialog.Filter = "Image Files(*.BMP;*.JPG;*.GIF;*.PNG)|*.BMP;*.JPG;*.GIF;*.PNG|All files (*.*)|*.*"; //формат загружаемого файла
-            if (open_dialog.ShowDialog() == DialogResult.OK) //если в окне была нажата кнопка "ОК"
-            {
-                try
-                {
-                    bitmap = new Bitmap(open_dialog.FileName);
-                    //вместо pictureBox1 укажите pictureBox, в который нужно загрузить изображение 
-                    this.pictureBox1.Size = bitmap.Size;
-                    pictureBox1.Image = bitmap;
-                    pictureBox1.Invalidate();
-                }
-                catch
-                {
-                    DialogResult rezult = MessageBox.Show("Невозможно открыть выбранный файл",
-                    "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-        }
-        private void DrawVertex(int x, int y, string number) // метод рисующий вершину
-        {
-            gr.FillEllipse(Brushes.White, (x - R), (y - R), 2 * R, 2 * R);
-            gr.DrawEllipse(blackPen, (x - R), (y - R), 2 * R, 2 * R);
-            point = new PointF(x - 9, y - 9);
-            gr.DrawString(number, fo, br, point);
-        }
-        private void DrawEdge(Vertex V1, Vertex V2, Edge E) // метод рисующий ребро
-        {
-            if (E.v1 == E.v2)
-            {
-                gr.DrawArc(darkGoldPen, (V1.x - 2 * R), (V1.y - 2 * R), 2 * R, 2 * R, 90, 270);
-                point = new PointF(V1.x - (int)(2.75 * R), V1.y - (int)(2.75 * R));
-                DrawVertex(V1.x, V1.y, (E.v1 + 1).ToString());
-            }
-            else
-            {
-                gr.DrawLine(darkGoldPen, V1.x, V1.y, V2.x, V2.y);
-                point = new PointF((V1.x + V2.x) / 2, (V1.y + V2.y) / 2);
-                DrawVertex(V1.x, V1.y, (E.v1 + 1).ToString());
-                DrawVertex(V2.x, V2.y, (E.v2 + 1).ToString());
-            }
-        }
+
         private void DrawALLGraph(List<Vertex> V, List<Edge> E) // Метод сохраняющий вершины на pictureBox
         {
             //рисуем ребра
@@ -305,9 +273,9 @@ namespace Wave_Algorithm
         }
         private void AlgorithmLee(object sender, EventArgs e) // Волновой алгоритм
         {
-            int[,] AMatrix = new int[V.Count, V.Count];
+            int[,] AMatrix = new int[verticies.Count, verticies.Count];
             int k, j;
-            FillAdjacencyMatrix(V.Count, E, AMatrix);
+            FillAdjacencyMatrix(verticies.Count, E, AMatrix);
 
             int start = Convert.ToInt32(textBox1.Text) - 1;
             int target = Convert.ToInt32(textBox2.Text) - 1;
@@ -360,11 +328,11 @@ namespace Wave_Algorithm
         private void СhainButton_Click(object sender, EventArgs e) // вывод всех путей из старта в финиш (листбокс)
         {
             chainList.Clear();
-            int[] color = new int[V.Count];
-            for (int i = 0; i < V.Count - 1; i++)
-                for (int j = i + 1; j < V.Count; j++)
+            int[] color = new int[verticies.Count];
+            for (int i = 0; i < verticies.Count - 1; i++)
+                for (int j = i + 1; j < verticies.Count; j++)
                 {
-                    for (int k = 0; k < V.Count; k++)
+                    for (int k = 0; k < verticies.Count; k++)
                         color[k] = 1;
                     DFSchain(i, j, E, color, (i + 1).ToString());
                 }
@@ -387,26 +355,6 @@ namespace Wave_Algorithm
             {
                 listBox1.Items.Add(i);
             }
-        }
-    }
-    // класс описывающий вершину графа
-    class Vertex
-    {
-        public int x, y;
-        public Vertex(int x, int y)
-        {
-            this.x = x;
-            this.y = y;
-        }
-    }  
-    // класс описывающий ребро графа
-    class Edge
-    {
-        public int v1, v2;
-        public Edge(int v1, int v2)
-        {
-            this.v1 = v1;
-            this.v2 = v2;
         }
     }
 }

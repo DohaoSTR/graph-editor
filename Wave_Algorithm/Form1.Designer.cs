@@ -35,8 +35,6 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.файлToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.новыйГрафToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.сохранитьГрафToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.загрузитьГрафToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.button5 = new System.Windows.Forms.Button();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -102,9 +100,7 @@
             // файлToolStripMenuItem
             // 
             this.файлToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.новыйГрафToolStripMenuItem,
-            this.сохранитьГрафToolStripMenuItem,
-            this.загрузитьГрафToolStripMenuItem});
+            this.новыйГрафToolStripMenuItem});
             this.файлToolStripMenuItem.Name = "файлToolStripMenuItem";
             this.файлToolStripMenuItem.Size = new System.Drawing.Size(48, 20);
             this.файлToolStripMenuItem.Text = "Файл";
@@ -112,23 +108,9 @@
             // новыйГрафToolStripMenuItem
             // 
             this.новыйГрафToolStripMenuItem.Name = "новыйГрафToolStripMenuItem";
-            this.новыйГрафToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
+            this.новыйГрафToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.новыйГрафToolStripMenuItem.Text = "Очистить граф";
             this.новыйГрафToolStripMenuItem.Click += new System.EventHandler(this.DeleteALLButton_Click);
-            // 
-            // сохранитьГрафToolStripMenuItem
-            // 
-            this.сохранитьГрафToolStripMenuItem.Name = "сохранитьГрафToolStripMenuItem";
-            this.сохранитьГрафToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
-            this.сохранитьГрафToolStripMenuItem.Text = "Сохранить граф";
-            this.сохранитьГрафToolStripMenuItem.Click += new System.EventHandler(this.SaveButton_Click);
-            // 
-            // загрузитьГрафToolStripMenuItem
-            // 
-            this.загрузитьГрафToolStripMenuItem.Name = "загрузитьГрафToolStripMenuItem";
-            this.загрузитьГрафToolStripMenuItem.Size = new System.Drawing.Size(163, 22);
-            this.загрузитьГрафToolStripMenuItem.Text = "Загрузить граф";
-            this.загрузитьГрафToolStripMenuItem.Click += new System.EventHandler(this.LoadButton_Click);
             // 
             // button5
             // 
@@ -237,7 +219,6 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem файлToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem новыйГрафToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem сохранитьГрафToolStripMenuItem;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.TextBox textBox1;
@@ -246,7 +227,6 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.ToolStripMenuItem загрузитьГрафToolStripMenuItem;
     }
 }
 
