@@ -1,6 +1,8 @@
-﻿namespace GraphModel
+﻿using GraphModel.GraphElements;
+
+namespace GraphModel
 {
-    public class Vertex
+    public class Vertex : GraphElement
     {
         public Point GetPoint { get; }
 

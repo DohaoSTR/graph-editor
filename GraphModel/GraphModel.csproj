@@ -42,12 +42,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Edge.cs" />
-    <Compile Include="FieldGraph.cs" />
-    <Compile Include="Loop.cs" />
-    <Compile Include="Point.cs" />
+    <Compile Include="Assets\Model\FieldGraph.cs" />
+    <Compile Include="Assets\Model\GraphElements\Edge.cs" />
+    <Compile Include="Assets\Model\GraphElements\Element.cs" />
+    <Compile Include="Assets\Model\GraphElements\IElement.cs" />
+    <Compile Include="Assets\Model\GraphElements\Loop.cs" />
+    <Compile Include="Assets\Model\Point.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Vertex.cs" />
+    <Compile Include="Assets\Model\GraphElements\Vertex.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,6 +1,9 @@
-﻿namespace GraphModel
+﻿using GraphModel.GraphElements;
+using System.Collections.Generic;
+
+namespace GraphModel
 {
-    public class Edge
+    public class Edge : GraphElement
     {
         public Vertex First { get; set; }
 

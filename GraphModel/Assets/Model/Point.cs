@@ -1,4 +1,4 @@
-﻿namespace GraphModel
+﻿namespace GraphModel.Assets.Model
 {
     public class Point
     {
