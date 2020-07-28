@@ -1,27 +1,38 @@
 ﻿using GraphModel.Assets.Model.GraphElements;
+using System;
 
 namespace GraphModel.Assets.Model
 {
     public class FieldGraph
     {
-        public delegate void OnAddElement(IElement element);
+        public event Action<IElement> AddedElement;
 
-        public delegate void OnDeleteElement(IElement element);
-
-        public event OnAddElement AddedElement;
-
-        public event OnDeleteElement DeletedElement;
+        public event Action<IElement> RemovedElement;
 
         public void AddElement(IElement element)
         {
             element.Add();
-            AddedElement(element);
+            OnAddElement(element);
         }
 
         public void RemoveElement(IElement element)
         {
             element.Remove();
-            DeletedElement(element);
+            OnRemoveElement(element);
+        }
+
+        private void OnAddElement(IElement element)
+        {
+            if (AddedElement == null)
+                return;
+            AddedElement(element);
+        }
+
+        private void OnRemoveElement(IElement element)
+        {
+            if (RemovedElement == null)
+                return;
+            RemovedElement(element);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using GraphModel.Assets.Model;
 using GraphModel.Assets.Model.GraphElements;
+using System;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -7,17 +8,17 @@ namespace Wave_Algorithm
 {
     public partial class Form1 : Form
     {
-        private Bitmap bitmap;
-        private Pen blackPen;
-        private Pen redPen;
-        private Pen darkGoldPen;
-        private Graphics graphics;
-        private Font font;
-        private Brush brush;
+        private readonly Bitmap bitmap;
+        private readonly Pen blackPen;
+        private readonly Pen redPen;
+        private readonly Pen darkGoldPen;
+        private readonly Graphics graphics;
+        private readonly Font font;
+        private readonly Brush brush;
         private PointF pointf;
-        private int R = 20; 
+        private readonly int R = 20; 
 
-        private FieldGraph fieldGraph;
+        private readonly FieldGraph fieldGraph;
 
         public Form1()
         {
@@ -46,12 +47,26 @@ namespace Wave_Algorithm
             pictureBox1.Image = bitmap;
         }
 
+        private int GetNumberOfVertex(Vertex vertex)
+        {
+            int i = 0;
+            foreach (Vertex element in Vertex.GetVertices)
+            {
+                i++;
+                if (element == vertex)
+                {
+                    return i;
+                }
+            }
+            throw new Exception("Вершина не найдена!");
+        }
+
         private void DrawVertex(Vertex vertex)
         {
-            graphics.FillEllipse(Brushes.White, (point.X - R), (point.Y - R), 2 * R, 2 * R);
-            graphics.DrawEllipse(blackPen, (point.X - R), (point.Y - R), 2 * R, 2 * R);
-            pointf = new PointF(point.X - 9, point.Y - 9);
-            graphics.DrawString(Vertex.GetVertices.Count.ToString(), font, brush, pointf);
+            graphics.FillEllipse(Brushes.White, (vertex.GetPoint.X - R), (vertex.GetPoint.Y - R), 2 * R, 2 * R);
+            graphics.DrawEllipse(blackPen, (vertex.GetPoint.X - R), (vertex.GetPoint.Y - R), 2 * R, 2 * R);
+            pointf = new PointF(vertex.GetPoint.X - 9, vertex.GetPoint.Y - 9);
+            graphics.DrawString(GetNumberOfVertex(vertex).ToString(), font, brush, pointf);
         }
 
         private void DrawEdge()
@@ -96,8 +111,9 @@ namespace Wave_Algorithm
         {
             if (button2.Enabled == false)
             {
-                Vertex.GetVertices.Add(new Vertex(new GraphModel.Assets.Model.Point(e.X, e.Y)));
-                DrawVertex(new GraphModel.Assets.Model.Point(e.X, e.Y));
+                Vertex vertexToAdd = new Vertex(new GraphModel.Assets.Model.Point(e.X, e.Y));
+                fieldGraph.AddElement(vertexToAdd);
+                DrawVertex(vertexToAdd);
                 pictureBox1.Image = bitmap;
             }
         }
@@ -118,9 +134,9 @@ namespace Wave_Algorithm
             //    }
             //}
 
-            for (int i = 0; i < Vertex.GetVertices.Count; i++)
+            foreach (var vertex in Vertex.GetVertices)
             {
-                DrawVertex(Vertex.GetVertices[i].GetPoint);
+                DrawVertex(vertex);
             }
         }
     }
