@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wave_Algorithm", "Wave_Algorithm\Wave_Algorithm.csproj", "{B3FDF1F8-4001-4D50-AAB5-C6C7984F731C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphModel", "GraphModel\GraphModel.csproj", "{E8149D28-4F54-41A9-B653-B7C8FD27185A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphsLibrary", "GraphsLibrary\GraphsLibrary.csproj", "{3DAA89D7-86AE-4389-8116-3E16DDD7D807}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{B3FDF1F8-4001-4D50-AAB5-C6C7984F731C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3FDF1F8-4001-4D50-AAB5-C6C7984F731C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3FDF1F8-4001-4D50-AAB5-C6C7984F731C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E8149D28-4F54-41A9-B653-B7C8FD27185A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E8149D28-4F54-41A9-B653-B7C8FD27185A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E8149D28-4F54-41A9-B653-B7C8FD27185A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E8149D28-4F54-41A9-B653-B7C8FD27185A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DAA89D7-86AE-4389-8116-3E16DDD7D807}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DAA89D7-86AE-4389-8116-3E16DDD7D807}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DAA89D7-86AE-4389-8116-3E16DDD7D807}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DAA89D7-86AE-4389-8116-3E16DDD7D807}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

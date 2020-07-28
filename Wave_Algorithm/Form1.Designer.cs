@@ -55,7 +55,7 @@
             this.pictureBox1.Size = new System.Drawing.Size(800, 426);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
-            this.pictureBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.PictureBox1_MouseClick);
+            this.pictureBox1.MouseClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseClick);
             // 
             // button2
             // 
@@ -65,7 +65,7 @@
             this.button2.TabIndex = 2;
             this.button2.Text = "Построить вершину";
             this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.DrawVertexButton2_Click);
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button3
             // 
@@ -75,7 +75,7 @@
             this.button3.TabIndex = 3;
             this.button3.Text = "Построить ребро";
             this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.DrawEdgeButton3_Click);
+            this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // button4
             // 
@@ -85,7 +85,7 @@
             this.button4.TabIndex = 4;
             this.button4.Text = "Удалить элемент";
             this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.DeleteButton4_Click);
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // menuStrip1
             // 
@@ -108,9 +108,8 @@
             // новыйГрафToolStripMenuItem
             // 
             this.новыйГрафToolStripMenuItem.Name = "новыйГрафToolStripMenuItem";
-            this.новыйГрафToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.новыйГрафToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
             this.новыйГрафToolStripMenuItem.Text = "Очистить граф";
-            this.новыйГрафToolStripMenuItem.Click += new System.EventHandler(this.DeleteALLButton_Click);
             // 
             // button5
             // 
@@ -120,7 +119,6 @@
             this.button5.TabIndex = 8;
             this.button5.Text = "Найти кратчайший путь";
             this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.AlgorithmLee);
             // 
             // textBox2
             // 
@@ -162,7 +160,6 @@
             this.button1.TabIndex = 15;
             this.button1.Text = "Найти все пути";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.СhainButton_Click);
             // 
             // listBox1
             // 
