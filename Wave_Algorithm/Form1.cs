@@ -6,8 +6,19 @@ using System.Windows.Forms;
 
 namespace Wave_Algorithm
 {
+    public enum SelectedVertex
+    {
+        None, First, Second
+    }
+
     public partial class Form1 : Form
     {
+        private SelectedVertex firstVertex;
+        private SelectedVertex secondVertex;
+
+        private int numberOfSelectedFirstVertex;
+        private int numberOfSelectedSecondVertex;
+
         private readonly Bitmap bitmap;
         private readonly Pen blackPen;
         private readonly Pen redPen;
@@ -42,6 +53,9 @@ namespace Wave_Algorithm
             font = new Font("Arial", 15);
             brush = Brushes.Black;
 
+            firstVertex = SelectedVertex.None;
+            secondVertex = SelectedVertex.None;
+
             fieldGraph = new FieldGraph();
 
             pictureBox1.Image = bitmap;
@@ -69,15 +83,17 @@ namespace Wave_Algorithm
             graphics.DrawString(GetNumberOfVertex(vertex).ToString(), font, brush, pointf);
         }
 
-        private void DrawEdge()
+        private void DrawEdge(Edge edge)
         {
-            
+            graphics.DrawLine(darkGoldPen, edge.First.GetPoint.X, edge.First.GetPoint.Y, edge.Second.GetPoint.X, edge.Second.GetPoint.Y);
         }
 
-        private void DrawLoop()
-        { }
+        private void DrawLoop(Loop loop)
+        {
+            graphics.DrawArc(darkGoldPen, loop.First.GetPoint.X - 2 * R, loop.First.GetPoint.Y - 2 * R, 2 * R, 2 * R, 90, 270);
+        }
 
-        private void button2_Click(object sender, System.EventArgs e) // вершина
+        private void button2_Click(object sender, EventArgs e) // вершина
         {
             button2.Enabled = false;
             button3.Enabled = true;
@@ -87,7 +103,7 @@ namespace Wave_Algorithm
             pictureBox1.Image = bitmap;
         }
 
-        private void button3_Click(object sender, System.EventArgs e) // Ребро
+        private void button3_Click(object sender, EventArgs e) // Ребро
         {
             button3.Enabled = false;
             button2.Enabled = true;
@@ -97,7 +113,7 @@ namespace Wave_Algorithm
             pictureBox1.Image = bitmap;
         }
 
-        private void button4_Click(object sender, System.EventArgs e) // удалить элемент
+        private void button4_Click(object sender, EventArgs e) // удалить элемент
         {
             button4.Enabled = false;
             button2.Enabled = true;
@@ -109,30 +125,65 @@ namespace Wave_Algorithm
 
         private void pictureBox1_MouseClick(object sender, MouseEventArgs e) // Нажатие на пичер бокс
         {
-            if (button2.Enabled == false)
+            if (!button2.Enabled)
             {
                 Vertex vertexToAdd = new Vertex(new GraphModel.Assets.Model.Point(e.X, e.Y));
                 fieldGraph.AddElement(vertexToAdd);
                 DrawVertex(vertexToAdd);
                 pictureBox1.Image = bitmap;
+            } 
+            else if (!button3.Enabled)
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    foreach (var el in Vertex.GetVertices)
+                    {
+                        if (Math.Pow(el.GetPoint.X - e.X, 2) + Math.Pow(el.GetPoint.Y - e.Y, 2) <= R * R)
+                        {
+                            if (firstVertex == SelectedVertex.None)
+                            {
+                                graphics.DrawEllipse(redPen, el.GetPoint.X - R, el.GetPoint.Y - R, 2 * R, 2 * R);
+                                numberOfSelectedFirstVertex = GetNumberOfVertex(el);
+                                pictureBox1.Image = bitmap;
+                                break;
+                            }
+                            if (secondVertex == SelectedVertex.None)
+                            {
+                                graphics.DrawEllipse(redPen, el.GetPoint.X - R, el.GetPoint.Y - R, 2 * R, 2 * R);
+                                numberOfSelectedSecondVertex = GetNumberOfVertex(el);
+                                fieldGraph.AddElement(new Edge(Vertex.GetVertices[numberOfSelectedFirstVertex], Vertex.GetVertices[numberOfSelectedSecondVertex]));
+                                DrawEdge(new Edge(Vertex.GetVertices[numberOfSelectedFirstVertex], Vertex.GetVertices[numberOfSelectedSecondVertex]));
+                                firstVertex = SelectedVertex.None;
+                                secondVertex = SelectedVertex.None;
+                                pictureBox1.Image = bitmap;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (e.Button == MouseButtons.Right)
+                {
+                    if ((firstVertex != SelectedVertex.None) &&
+                        (Math.Pow(Vertex.GetVertices[numberOfSelectedFirstVertex].GetPoint.X - e.X, 2) + Math.Pow(Vertex.GetVertices[numberOfSelectedFirstVertex].GetPoint.Y - e.Y, 2) <= R * R))
+                    {
+                        DrawVertex(Vertex.GetVertices[numberOfSelectedFirstVertex]);
+                        firstVertex = SelectedVertex.None;
+                        pictureBox1.Image = bitmap;
+                    }
+                }
+            }
+            else if (!button4.Enabled)
+            {
+
             }
         }
 
         private void DrawAllGraph()
         {
-            //for (int i = 0; i < Edge.GetEdges.Count; i++)
-            //{
-            //    if (Edge.GetEdges[i].Second == Edge.GetEdges[i].First)
-            //    {
-            //        graphics.DrawArc(darkGoldPen, (V[E[i].v1].x - 2 * R), (V[E[i].v1].y - 2 * R), 2 * R, 2 * R, 90, 270);
-            //        pointf = new PointF(V[E[i].v1].x - (int)(2.75 * R), V[E[i].v1].y - (int)(2.75 * R));
-            //    }
-            //    else
-            //    {
-            //        graphics.DrawLine(darkGoldPen, V[E[i].v1].x, V[E[i].v1].y, V[E[i].v2].x, V[E[i].v2].y);
-            //        pointf = new PointF((V[E[i].v1].x + V[E[i].v2].x) / 2, (V[E[i].v1].y + V[E[i].v2].y) / 2);
-            //    }
-            //}
+            foreach (var edge in Edge.GetEdges)
+            {
+                DrawEdge(edge);
+            }
 
             foreach (var vertex in Vertex.GetVertices)
             {
