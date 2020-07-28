@@ -59,6 +59,9 @@ namespace Wave_Algorithm
             
         }
 
+        private void DrawLoop()
+        { }
+
         private void button2_Click(object sender, System.EventArgs e) // вершина
         {
             button2.Enabled = false;

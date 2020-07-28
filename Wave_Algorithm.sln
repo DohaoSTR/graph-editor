@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.29102.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wave_Algorithm", "Wave_Algorithm\Wave_Algorithm.csproj", "{B3FDF1F8-4001-4D50-AAB5-C6C7984F731C}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3DAA89D7-86AE-4389-8116-3E16DDD7D807} = {3DAA89D7-86AE-4389-8116-3E16DDD7D807}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GraphsLibrary", "GraphsLibrary\GraphsLibrary.csproj", "{3DAA89D7-86AE-4389-8116-3E16DDD7D807}"
 EndProject

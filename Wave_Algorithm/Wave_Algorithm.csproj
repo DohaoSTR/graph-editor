@@ -106,5 +106,11 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GraphsLibrary\GraphsLibrary.csproj">
+      <Project>{3DAA89D7-86AE-4389-8116-3E16DDD7D807}</Project>
+      <Name>GraphsLibrary</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
