@@ -143,14 +143,15 @@ namespace Wave_Algorithm
                             if (firstVertex == SelectedVertex.None)
                             {
                                 graphics.DrawEllipse(redPen, el.GetPoint.X - R, el.GetPoint.Y - R, 2 * R, 2 * R);
-                                numberOfSelectedFirstVertex = GetNumberOfVertex(el);
+                                firstVertex = SelectedVertex.First;
+                                numberOfSelectedFirstVertex = GetNumberOfVertex(el) - 1;
                                 pictureBox1.Image = bitmap;
                                 break;
                             }
                             if (secondVertex == SelectedVertex.None)
                             {
                                 graphics.DrawEllipse(redPen, el.GetPoint.X - R, el.GetPoint.Y - R, 2 * R, 2 * R);
-                                numberOfSelectedSecondVertex = GetNumberOfVertex(el);
+                                numberOfSelectedSecondVertex = GetNumberOfVertex(el) - 1;
                                 fieldGraph.AddElement(new Edge(Vertex.GetVertices[numberOfSelectedFirstVertex], Vertex.GetVertices[numberOfSelectedSecondVertex]));
                                 DrawEdge(new Edge(Vertex.GetVertices[numberOfSelectedFirstVertex], Vertex.GetVertices[numberOfSelectedSecondVertex]));
                                 firstVertex = SelectedVertex.None;
