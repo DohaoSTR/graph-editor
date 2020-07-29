@@ -3,6 +3,7 @@ using GraphModel.Assets.Model.GraphElements;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Point = GraphModel.Assets.Model.Point;
 
 namespace Wave_Algorithm
 {
@@ -133,7 +134,7 @@ namespace Wave_Algorithm
         {
             if (!button2.Enabled)
             {
-                Vertex vertexToAdd = new Vertex(new GraphModel.Assets.Model.Point(e.X, e.Y));
+                Vertex vertexToAdd = new Vertex(new Point(e.X, e.Y));
                 fieldGraph.AddElement(vertexToAdd);
                 DrawVertex(vertexToAdd);
                 pictureBox1.Image = bitmap;
