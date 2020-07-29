@@ -4,38 +4,30 @@ namespace GraphModel.Assets.Model.GraphElements
 {
     public class Vertex : Element
     {
-        public static List<Vertex> GetVertices { get; }
+        private static readonly List<Vertex> _vertices = new List<Vertex>();
+
+        public static IReadOnlyCollection<Vertex> Vertices => _vertices;
 
         public Point GetPoint { get; }
 
-        public Vertex(Point point)
-        {
-            GetPoint = point;
-        }
+        public Vertex(Point point) => GetPoint = point;
 
-        static Vertex()
-        {
-            GetVertices = new List<Vertex>();
-        }
-
-        public override void Add()
-        {
-            GetVertices.Add(this);
-        }
+        public override void Add() => _vertices.Add(this);
 
         public override void Remove()
         {
             CheckVertexForEdges();
-            GetVertices.Remove(this);
+            _vertices.Remove(this);
         }
 
         private void CheckVertexForEdges()
         {
-            foreach (Edge edge in Edge.GetEdges)
+            List<Edge> edges = new List<Edge>(Edge.Edges);
+            foreach (Edge edge in edges)
             {
                 if (edge.First == this || edge.Second == this)
                 {
-                    Edge.GetEdges.Remove(edge);
+                    edge.Remove();
                 }
             }
         }

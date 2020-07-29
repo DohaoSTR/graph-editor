@@ -4,11 +4,13 @@ namespace GraphModel.Assets.Model.GraphElements
 {
     public class Edge : Element
     {
-        public static List<Edge> GetEdges { get; }
-        
-        public Vertex First { get; set; }
+        private static readonly List<Edge> _edges = new List<Edge>();
 
-        public Vertex Second { get; set; }
+        public static IReadOnlyCollection<Edge> Edges => _edges;
+        
+        public Vertex First { get; }
+
+        public Vertex Second { get; }
 
         public Edge(Vertex first, Vertex second)
         {
@@ -16,19 +18,8 @@ namespace GraphModel.Assets.Model.GraphElements
             Second = second;
         }
 
-        static Edge()
-        {
-            GetEdges = new List<Edge>();
-        }
+        public override void Add() => _edges.Add(this);
 
-        public override void Add()
-        {
-            GetEdges.Add(this);
-        }
-
-        public override void Remove()
-        {
-            GetEdges.Remove(this);
-        }
+        public override void Remove() => _edges.Remove(this);
     }
 }

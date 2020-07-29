@@ -31,6 +31,9 @@ namespace Wave_Algorithm
 
         private readonly FieldGraph fieldGraph;
 
+        private Vertex _first;
+        private Vertex _Second;
+
         public Form1()
         {
             InitializeComponent();
@@ -64,7 +67,7 @@ namespace Wave_Algorithm
         private int GetNumberOfVertex(Vertex vertex)
         {
             int i = 0;
-            foreach (Vertex element in Vertex.GetVertices)
+            foreach (Vertex element in Vertex.Vertices)
             {
                 i++;
                 if (element == vertex)
@@ -86,11 +89,14 @@ namespace Wave_Algorithm
         private void DrawEdge(Edge edge)
         {
             graphics.DrawLine(darkGoldPen, edge.First.GetPoint.X, edge.First.GetPoint.Y, edge.Second.GetPoint.X, edge.Second.GetPoint.Y);
+            DrawVertex(edge.First);
+            DrawVertex(edge.Second);
         }
 
         private void DrawLoop(Loop loop)
         {
             graphics.DrawArc(darkGoldPen, loop.First.GetPoint.X - 2 * R, loop.First.GetPoint.Y - 2 * R, 2 * R, 2 * R, 90, 270);
+            DrawVertex(loop.First);
         }
 
         private void button2_Click(object sender, EventArgs e) // вершина
@@ -136,13 +142,14 @@ namespace Wave_Algorithm
             {
                 if (e.Button == MouseButtons.Left)
                 {
-                    foreach (var el in Vertex.GetVertices)
+                    foreach (var el in Vertex.Vertices)
                     {
                         if (Math.Pow(el.GetPoint.X - e.X, 2) + Math.Pow(el.GetPoint.Y - e.Y, 2) <= R * R)
                         {
                             if (firstVertex == SelectedVertex.None)
                             {
                                 graphics.DrawEllipse(redPen, el.GetPoint.X - R, el.GetPoint.Y - R, 2 * R, 2 * R);
+                                _first = el;
                                 firstVertex = SelectedVertex.First;
                                 numberOfSelectedFirstVertex = GetNumberOfVertex(el) - 1;
                                 pictureBox1.Image = bitmap;
@@ -152,10 +159,18 @@ namespace Wave_Algorithm
                             {
                                 graphics.DrawEllipse(redPen, el.GetPoint.X - R, el.GetPoint.Y - R, 2 * R, 2 * R);
                                 numberOfSelectedSecondVertex = GetNumberOfVertex(el) - 1;
-                                fieldGraph.AddElement(new Edge(Vertex.GetVertices[numberOfSelectedFirstVertex], Vertex.GetVertices[numberOfSelectedSecondVertex]));
-                                DrawEdge(new Edge(Vertex.GetVertices[numberOfSelectedFirstVertex], Vertex.GetVertices[numberOfSelectedSecondVertex]));
+                                _Second = el;
+                                if (numberOfSelectedFirstVertex == numberOfSelectedSecondVertex)
+                                {
+                                    fieldGraph.AddElement(new Loop(el));
+                                    DrawLoop(new Loop(el));
+                                }
+                                else
+                                {
+                                    fieldGraph.AddElement(new Edge(_first, _Second));
+                                    DrawEdge(new Edge(_first, _Second));
+                                }
                                 firstVertex = SelectedVertex.None;
-                                secondVertex = SelectedVertex.None;
                                 pictureBox1.Image = bitmap;
                                 break;
                             }
@@ -165,9 +180,9 @@ namespace Wave_Algorithm
                 if (e.Button == MouseButtons.Right)
                 {
                     if ((firstVertex != SelectedVertex.None) &&
-                        (Math.Pow(Vertex.GetVertices[numberOfSelectedFirstVertex].GetPoint.X - e.X, 2) + Math.Pow(Vertex.GetVertices[numberOfSelectedFirstVertex].GetPoint.Y - e.Y, 2) <= R * R))
+                        (Math.Pow(_first.GetPoint.X - e.X, 2) + Math.Pow(_Second.GetPoint.Y - e.Y, 2) <= R * R))
                     {
-                        DrawVertex(Vertex.GetVertices[numberOfSelectedFirstVertex]);
+                        DrawVertex(_first);
                         firstVertex = SelectedVertex.None;
                         pictureBox1.Image = bitmap;
                     }
@@ -175,18 +190,73 @@ namespace Wave_Algorithm
             }
             else if (!button4.Enabled)
             {
-
+                bool flag = false; //удалили ли что-нибудь по ЭТОМУ клику
+                //ищем, возможно была нажата вершина
+                foreach (var el in Vertex.Vertices)
+                {
+                    if (Math.Pow(el.GetPoint.X - e.X, 2) + Math.Pow(el.GetPoint.Y - e.Y, 2) <= R * R)
+                    {
+                        fieldGraph.RemoveElement(el);
+                        flag = true;
+                        break;
+                    }
+                }
+                //ищем, возможно было нажато ребро
+                if (!flag)
+                {
+                    foreach (var el in Edge.Edges)
+                    {
+                        if (el is Loop) //если это петля
+                        {
+                            if ((Math.Pow(el.First.GetPoint.X - R - e.X, 2) + Math.Pow(el.First.GetPoint.Y - R - e.Y, 2) <= ((R + 2) * (R + 2))) &&
+                                (Math.Pow(el.First.GetPoint.X - R - e.X, 2) + Math.Pow(el.First.GetPoint.Y - R - e.Y, 2) >= ((R - 2) * (R - 2))))
+                            {
+                                fieldGraph.RemoveElement(el);
+                                flag = true;
+                                break;
+                            }
+                        }
+                        else //не петля
+                        {
+                            if (((e.X - el.First.GetPoint.X) * (el.Second.GetPoint.Y - el.First.GetPoint.Y) / (el.Second.GetPoint.X - el.First.GetPoint.X) + el.First.GetPoint.Y) <= (e.Y + 4)
+                                && ((e.X - el.First.GetPoint.X) * (el.Second.GetPoint.Y - el.First.GetPoint.Y) / (el.Second.GetPoint.X - el.First.GetPoint.X) + el.First.GetPoint.Y) >= (e.Y - 4))
+                            {
+                                if ((el.First.GetPoint.X <= el.Second.GetPoint.X && el.First.GetPoint.X <= e.X && e.X <= el.Second.GetPoint.X) ||
+                                    (el.First.GetPoint.X >= el.Second.GetPoint.X && el.First.GetPoint.X >= e.X && e.X >= el.Second.GetPoint.X))
+                                {
+                                    fieldGraph.RemoveElement(el);
+                                    flag = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                //если что-то было удалено, то обновляем граф на экране
+                if (flag)
+                {
+                    graphics.Clear(Color.White);
+                    DrawAllGraph();
+                    pictureBox1.Image = bitmap;
+                }
             }
         }
 
         private void DrawAllGraph()
         {
-            foreach (var edge in Edge.GetEdges)
+            foreach (var edge in Edge.Edges)
             {
-                DrawEdge(edge);
+                if (edge is Loop loop)
+                {
+                    DrawLoop(loop);
+                }
+                else
+                {
+                    DrawEdge(edge);
+                }
             }
 
-            foreach (var vertex in Vertex.GetVertices)
+            foreach (var vertex in Vertex.Vertices)
             {
                 DrawVertex(vertex);
             }

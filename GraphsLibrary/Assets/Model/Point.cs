@@ -2,9 +2,9 @@
 {
     public class Point
     {
-        public float X { get; set; }
+        public float X { get; }
 
-        public float Y { get; set; }
+        public float Y { get; }
 
         public Point(float x, float y)
         {
