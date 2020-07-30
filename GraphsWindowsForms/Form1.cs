@@ -86,6 +86,26 @@ namespace Wave_Algorithm
             DrawVertex(loop.First);
         }
 
+        private void DrawAllGraph()
+        {
+            foreach (var edge in Edge.Edges)
+            {
+                if (edge is Loop loop)
+                {
+                    DrawLoop(loop);
+                }
+                else
+                {
+                    DrawEdge(edge);
+                }
+            }
+
+            foreach (var vertex in Vertex.Vertices)
+            {
+                DrawVertex(vertex);
+            }
+        }
+
         private void GraphPictureBox_MouseClick(object sender, MouseEventArgs e)
         {
             if (!button2.Enabled)
@@ -194,26 +214,6 @@ namespace Wave_Algorithm
                     DrawAllGraph();
                     pictureBox1.Image = bitmap;
                 }
-            }
-        }
-
-        private void DrawAllGraph()
-        {
-            foreach (var edge in Edge.Edges)
-            {
-                if (edge is Loop loop)
-                {
-                    DrawLoop(loop);
-                }
-                else
-                {
-                    DrawEdge(edge);
-                }
-            }
-
-            foreach (var vertex in Vertex.Vertices)
-            {
-                DrawVertex(vertex);
             }
         }
 
