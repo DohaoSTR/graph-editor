@@ -7,19 +7,8 @@ using Point = GraphModel.Assets.Model.Point;
 
 namespace Wave_Algorithm
 {
-    public enum SelectedVertex
-    {
-        None, First, Second
-    }
-
     public partial class Form1 : Form
     {
-        private SelectedVertex firstVertex;
-        private SelectedVertex secondVertex;
-
-        private int numberOfSelectedFirstVertex;
-        private int numberOfSelectedSecondVertex;
-
         private readonly Bitmap bitmap;
         private readonly Pen blackPen;
         private readonly Pen redPen;
@@ -33,7 +22,7 @@ namespace Wave_Algorithm
         private readonly FieldGraph fieldGraph;
 
         private Vertex _first;
-        private Vertex _Second;
+        private Vertex _second;
 
         public Form1()
         {
@@ -56,9 +45,6 @@ namespace Wave_Algorithm
             };
             font = new Font("Arial", 15);
             brush = Brushes.Black;
-
-            firstVertex = SelectedVertex.None;
-            secondVertex = SelectedVertex.None;
 
             fieldGraph = new FieldGraph();
 
@@ -100,37 +86,7 @@ namespace Wave_Algorithm
             DrawVertex(loop.First);
         }
 
-        private void button2_Click(object sender, EventArgs e) // вершина
-        {
-            button2.Enabled = false;
-            button3.Enabled = true;
-            button4.Enabled = true;
-            graphics.Clear(Color.White);
-            DrawAllGraph();
-            pictureBox1.Image = bitmap;
-        }
-
-        private void button3_Click(object sender, EventArgs e) // Ребро
-        {
-            button3.Enabled = false;
-            button2.Enabled = true;
-            button4.Enabled = true;
-            graphics.Clear(Color.White);
-            DrawAllGraph();
-            pictureBox1.Image = bitmap;
-        }
-
-        private void button4_Click(object sender, EventArgs e) // удалить элемент
-        {
-            button4.Enabled = false;
-            button2.Enabled = true;
-            button3.Enabled = true;
-            graphics.Clear(Color.White);
-            DrawAllGraph();
-            pictureBox1.Image = bitmap;
-        }
-
-        private void pictureBox1_MouseClick(object sender, MouseEventArgs e) // Нажатие на пичер бокс
+        private void GraphPictureBox_MouseClick(object sender, MouseEventArgs e)
         {
             if (!button2.Enabled)
             {
@@ -147,31 +103,31 @@ namespace Wave_Algorithm
                     {
                         if (Math.Pow(el.GetPoint.X - e.X, 2) + Math.Pow(el.GetPoint.Y - e.Y, 2) <= R * R)
                         {
-                            if (firstVertex == SelectedVertex.None)
+                            if (_first == null)
                             {
-                                graphics.DrawEllipse(redPen, el.GetPoint.X - R, el.GetPoint.Y - R, 2 * R, 2 * R);
                                 _first = el;
-                                firstVertex = SelectedVertex.First;
-                                numberOfSelectedFirstVertex = GetNumberOfVertex(el) - 1;
+                                graphics.DrawEllipse(redPen, el.GetPoint.X - R, el.GetPoint.Y - R, 2 * R, 2 * R);
                                 pictureBox1.Image = bitmap;
                                 break;
                             }
-                            if (secondVertex == SelectedVertex.None)
+                            if (_second == null)
                             {
+                                _second = el;
                                 graphics.DrawEllipse(redPen, el.GetPoint.X - R, el.GetPoint.Y - R, 2 * R, 2 * R);
-                                numberOfSelectedSecondVertex = GetNumberOfVertex(el) - 1;
-                                _Second = el;
-                                if (numberOfSelectedFirstVertex == numberOfSelectedSecondVertex)
+
+                                if (_first == _second)
                                 {
                                     fieldGraph.AddElement(new Loop(el));
                                     DrawLoop(new Loop(el));
                                 }
                                 else
                                 {
-                                    fieldGraph.AddElement(new Edge(_first, _Second));
-                                    DrawEdge(new Edge(_first, _Second));
+                                    fieldGraph.AddElement(new Edge(_first, _second));
+                                    DrawEdge(new Edge(_first, _second));
                                 }
-                                firstVertex = SelectedVertex.None;
+
+                                _first = null;
+                                _second = null;
                                 pictureBox1.Image = bitmap;
                                 break;
                             }
@@ -180,19 +136,17 @@ namespace Wave_Algorithm
                 }
                 if (e.Button == MouseButtons.Right)
                 {
-                    if ((firstVertex != SelectedVertex.None) &&
-                        (Math.Pow(_first.GetPoint.X - e.X, 2) + Math.Pow(_Second.GetPoint.Y - e.Y, 2) <= R * R))
+                    if ((_first != null) && (Math.Pow(_first.GetPoint.X - e.X, 2) + Math.Pow(_second.GetPoint.Y - e.Y, 2) <= R * R))
                     {
                         DrawVertex(_first);
-                        firstVertex = SelectedVertex.None;
                         pictureBox1.Image = bitmap;
                     }
                 }
             }
             else if (!button4.Enabled)
             {
-                bool flag = false; //удалили ли что-нибудь по ЭТОМУ клику
-                //ищем, возможно была нажата вершина
+                bool flag = false;
+
                 foreach (var el in Vertex.Vertices)
                 {
                     if (Math.Pow(el.GetPoint.X - e.X, 2) + Math.Pow(el.GetPoint.Y - e.Y, 2) <= R * R)
@@ -202,12 +156,12 @@ namespace Wave_Algorithm
                         break;
                     }
                 }
-                //ищем, возможно было нажато ребро
+
                 if (!flag)
                 {
                     foreach (var el in Edge.Edges)
                     {
-                        if (el is Loop) //если это петля
+                        if (el is Loop) 
                         {
                             if ((Math.Pow(el.First.GetPoint.X - R - e.X, 2) + Math.Pow(el.First.GetPoint.Y - R - e.Y, 2) <= ((R + 2) * (R + 2))) &&
                                 (Math.Pow(el.First.GetPoint.X - R - e.X, 2) + Math.Pow(el.First.GetPoint.Y - R - e.Y, 2) >= ((R - 2) * (R - 2))))
@@ -217,7 +171,7 @@ namespace Wave_Algorithm
                                 break;
                             }
                         }
-                        else //не петля
+                        else
                         {
                             if (((e.X - el.First.GetPoint.X) * (el.Second.GetPoint.Y - el.First.GetPoint.Y) / (el.Second.GetPoint.X - el.First.GetPoint.X) + el.First.GetPoint.Y) <= (e.Y + 4)
                                 && ((e.X - el.First.GetPoint.X) * (el.Second.GetPoint.Y - el.First.GetPoint.Y) / (el.Second.GetPoint.X - el.First.GetPoint.X) + el.First.GetPoint.Y) >= (e.Y - 4))
@@ -233,7 +187,7 @@ namespace Wave_Algorithm
                         }
                     }
                 }
-                //если что-то было удалено, то обновляем граф на экране
+
                 if (flag)
                 {
                     graphics.Clear(Color.White);
@@ -261,6 +215,36 @@ namespace Wave_Algorithm
             {
                 DrawVertex(vertex);
             }
+        }
+
+        private void DrawVertexButton_Click(object sender, EventArgs e)
+        {
+            button2.Enabled = false;
+            button3.Enabled = true;
+            button4.Enabled = true;
+            graphics.Clear(Color.White);
+            DrawAllGraph();
+            pictureBox1.Image = bitmap;
+        }
+
+        private void DrawEdgeButton_Click(object sender, EventArgs e)
+        {
+            button3.Enabled = false;
+            button2.Enabled = true;
+            button4.Enabled = true;
+            graphics.Clear(Color.White);
+            DrawAllGraph();
+            pictureBox1.Image = bitmap;
+        }
+
+        private void DeleteElementButton_Click(object sender, EventArgs e)
+        {
+            button4.Enabled = false;
+            button2.Enabled = true;
+            button3.Enabled = true;
+            graphics.Clear(Color.White);
+            DrawAllGraph();
+            pictureBox1.Image = bitmap;
         }
     }
 }
