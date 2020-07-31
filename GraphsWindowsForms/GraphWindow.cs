@@ -55,26 +55,12 @@ namespace Wave_Algorithm
             pictureBox1.Image = bitmap;
         }
 
-        private int GetNumberOfVertex(Vertex vertex)
-        {
-            int i = 0;
-            foreach (Vertex element in Vertex.Vertices)
-            {
-                if (element == vertex)
-                {
-                    return i;
-                }
-                i++;
-            }
-            throw new Exception("Вершина не найдена!");
-        }
-
         private void DrawVertex(Vertex vertex)
         {
             graphics.FillEllipse(Brushes.White, (vertex.GetPoint.X - R), (vertex.GetPoint.Y - R), 2 * R, 2 * R);
             graphics.DrawEllipse(blackPen, (vertex.GetPoint.X - R), (vertex.GetPoint.Y - R), 2 * R, 2 * R);
             pointf = new PointF(vertex.GetPoint.X - 9, vertex.GetPoint.Y - 9);
-            graphics.DrawString((GetNumberOfVertex(vertex) + 1).ToString(), font, brush, pointf);
+            graphics.DrawString((vertex.GetNumberOfVertex + 1).ToString(), font, brush, pointf);
         }
 
         private void DrawEdge(Edge edge)
@@ -259,8 +245,8 @@ namespace Wave_Algorithm
                     matrix[i, j] = 0;
             foreach(var el in Edge.Edges)
             {
-                matrix[GetNumberOfVertex(el.Start), GetNumberOfVertex(el.End)] = 1;
-                matrix[GetNumberOfVertex(el.End), GetNumberOfVertex(el.Start)] = 1;
+                matrix[el.Start.GetNumberOfVertex, el.End.GetNumberOfVertex] = 1;
+                matrix[el.End.GetNumberOfVertex, el.Start.GetNumberOfVertex] = 1;
             }
             return matrix;
         }
@@ -277,15 +263,15 @@ namespace Wave_Algorithm
             }
             foreach (var el in Edge.Edges)
             {
-                if (color[GetNumberOfVertex(el.End)] == 1 && GetNumberOfVertex(el.Start) == u)
+                if (color[el.End.GetNumberOfVertex] == 1 && el.Start.GetNumberOfVertex == u)
                 {
-                    DFSchain(GetNumberOfVertex(el.End), endV, color, s + (GetNumberOfVertex(el.End) + 1).ToString());
-                    color[GetNumberOfVertex(el.End)] = 1;
+                    DFSchain(el.End.GetNumberOfVertex, endV, color, s + (el.End.GetNumberOfVertex + 1).ToString());
+                    color[el.End.GetNumberOfVertex] = 1;
                 }
-                else if (color[GetNumberOfVertex(el.Start)] == 1 && GetNumberOfVertex(el.End) == u)
+                else if (color[el.Start.GetNumberOfVertex] == 1 && el.End.GetNumberOfVertex == u)
                 {
-                    DFSchain(GetNumberOfVertex(el.Start), endV, color, s + (GetNumberOfVertex(el.Start) + 1).ToString());
-                    color[GetNumberOfVertex(el.Start)] = 1;
+                    DFSchain(el.Start.GetNumberOfVertex, endV, color, s + (el.Start.GetNumberOfVertex + 1).ToString());
+                    color[el.Start.GetNumberOfVertex] = 1;
                 }
             }
         }

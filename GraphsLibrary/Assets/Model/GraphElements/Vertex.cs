@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace GraphModel.Assets.Model.GraphElements
 {
@@ -7,6 +8,21 @@ namespace GraphModel.Assets.Model.GraphElements
         private static readonly List<Vertex> _vertices = new List<Vertex>();
 
         public static IReadOnlyCollection<Vertex> Vertices => _vertices;
+
+        public int GetNumberOfVertex
+        {
+            get
+            {
+                for (int i = 0; i <= _vertices.Count; i++)
+                {
+                    if (_vertices[i] == this)
+                    {
+                        return i;
+                    }
+                }
+                throw new Exception("Вершина не найдена!");
+            }
+        }
 
         public Point GetPoint { get; }
 
