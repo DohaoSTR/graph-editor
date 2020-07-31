@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using Point = GraphModel.Assets.Model.Point;
 
 namespace Wave_Algorithm
@@ -13,15 +12,15 @@ namespace Wave_Algorithm
     {
         private readonly List<string> _chainList = new List<string>();
 
-        private readonly Bitmap bitmap;
-        private readonly Pen blackPen;
-        private readonly Pen redPen;
-        private readonly Pen darkGoldPen;
-        private readonly Graphics graphics;
-        private readonly Font font;
-        private readonly Brush brush;
-        private PointF pointf;
-        private readonly int R = 20; 
+        private readonly Bitmap _bitmap;
+        private readonly Pen _blackPen;
+        private readonly Pen _redPen;
+        private readonly Pen _darkGoldPen;
+        private readonly Graphics _graphics;
+        private readonly Font _font;
+        private readonly Brush _brush;
+        private PointF _pointF;
+        private const int R = 20; 
 
         private readonly FieldGraph fieldGraph;
 
@@ -32,47 +31,52 @@ namespace Wave_Algorithm
         {
             InitializeComponent();
 
-            bitmap = new Bitmap(pictureBox1.Width, pictureBox1.Height);
-            graphics = Graphics.FromImage(bitmap);
-            graphics.Clear(Color.White);
-            blackPen = new Pen(Color.Black)
+            _bitmap = new Bitmap(pictureBox1.Width, pictureBox1.Height);
+
+            _graphics = Graphics.FromImage(_bitmap);
+            _graphics.Clear(Color.White);
+
+            _blackPen = new Pen(Color.Black)
             {
                 Width = 2
             };
-            redPen = new Pen(Color.Red)
+
+            _redPen = new Pen(Color.Red)
             {
                 Width = 2
             };
-            darkGoldPen = new Pen(Color.DarkGoldenrod)
+
+            _darkGoldPen = new Pen(Color.DarkGoldenrod)
             {
                 Width = 2
             };
-            font = new Font("Arial", 15);
-            brush = Brushes.Black;
+
+            _font = new Font("Arial", 15);
+            _brush = Brushes.Black;
 
             fieldGraph = new FieldGraph();
 
-            pictureBox1.Image = bitmap;
+            pictureBox1.Image = _bitmap;
         }
 
         private void DrawVertex(Vertex vertex)
         {
-            graphics.FillEllipse(Brushes.White, (vertex.GetPoint.X - R), (vertex.GetPoint.Y - R), 2 * R, 2 * R);
-            graphics.DrawEllipse(blackPen, (vertex.GetPoint.X - R), (vertex.GetPoint.Y - R), 2 * R, 2 * R);
-            pointf = new PointF(vertex.GetPoint.X - 9, vertex.GetPoint.Y - 9);
-            graphics.DrawString((vertex.GetNumber + 1).ToString(), font, brush, pointf);
+            _graphics.FillEllipse(Brushes.White, (vertex.GetPoint.X - R), (vertex.GetPoint.Y - R), 2 * R, 2 * R);
+            _graphics.DrawEllipse(_blackPen, (vertex.GetPoint.X - R), (vertex.GetPoint.Y - R), 2 * R, 2 * R);
+            _pointF = new PointF(vertex.GetPoint.X - 9, vertex.GetPoint.Y - 9);
+            _graphics.DrawString((vertex.GetNumber + 1).ToString(), _font, _brush, _pointF);
         }
 
         private void DrawEdge(Edge edge)
         {
-            graphics.DrawLine(darkGoldPen, edge.Start.GetPoint.X, edge.Start.GetPoint.Y, edge.End.GetPoint.X, edge.End.GetPoint.Y);
+            _graphics.DrawLine(_darkGoldPen, edge.Start.GetPoint.X, edge.Start.GetPoint.Y, edge.End.GetPoint.X, edge.End.GetPoint.Y);
             DrawVertex(edge.Start);
             DrawVertex(edge.End);
         }
 
         private void DrawLoop(Loop loop)
         {
-            graphics.DrawArc(darkGoldPen, loop.Start.GetPoint.X - 2 * R, loop.Start.GetPoint.Y - 2 * R, 2 * R, 2 * R, 90, 270);
+            _graphics.DrawArc(_darkGoldPen, loop.Start.GetPoint.X - 2 * R, loop.Start.GetPoint.Y - 2 * R, 2 * R, 2 * R, 90, 270);
             DrawVertex(loop.Start);
         }
 
@@ -103,7 +107,7 @@ namespace Wave_Algorithm
                 Vertex vertexToAdd = new Vertex(new Point(e.X, e.Y));
                 fieldGraph.AddElement(vertexToAdd);
                 DrawVertex(vertexToAdd);
-                pictureBox1.Image = bitmap;
+                pictureBox1.Image = _bitmap;
             } 
             else if (!DrawEdgeButton.Enabled)
             {
@@ -116,14 +120,14 @@ namespace Wave_Algorithm
                             if (_first == null)
                             {
                                 _first = el;
-                                graphics.DrawEllipse(redPen, el.GetPoint.X - R, el.GetPoint.Y - R, 2 * R, 2 * R);
-                                pictureBox1.Image = bitmap;
+                                _graphics.DrawEllipse(_redPen, el.GetPoint.X - R, el.GetPoint.Y - R, 2 * R, 2 * R);
+                                pictureBox1.Image = _bitmap;
                                 break;
                             }
                             if (_second == null)
                             {
                                 _second = el;
-                                graphics.DrawEllipse(redPen, el.GetPoint.X - R, el.GetPoint.Y - R, 2 * R, 2 * R);
+                                _graphics.DrawEllipse(_redPen, el.GetPoint.X - R, el.GetPoint.Y - R, 2 * R, 2 * R);
 
                                 if (_first == _second)
                                 {
@@ -138,18 +142,10 @@ namespace Wave_Algorithm
 
                                 _first = null;
                                 _second = null;
-                                pictureBox1.Image = bitmap;
+                                pictureBox1.Image = _bitmap;
                                 break;
                             }
                         }
-                    }
-                }
-                if (e.Button == MouseButtons.Right)
-                {
-                    if ((_first != null) && (Math.Pow(_first.GetPoint.X - e.X, 2) + Math.Pow(_second.GetPoint.Y - e.Y, 2) <= R * R))
-                    {
-                        DrawVertex(_first);
-                        pictureBox1.Image = bitmap;
                     }
                 }
             }
@@ -173,8 +169,7 @@ namespace Wave_Algorithm
                     {
                         if (el is Loop) 
                         {
-                            if ((Math.Pow(el.Start.GetPoint.X - R - e.X, 2) + Math.Pow(el.Start.GetPoint.Y - R - e.Y, 2) <= ((R + 2) * (R + 2))) &&
-                                (Math.Pow(el.Start.GetPoint.X - R - e.X, 2) + Math.Pow(el.Start.GetPoint.Y - R - e.Y, 2) >= ((R - 2) * (R - 2))))
+                            if (Math.Pow(el.Start.GetPoint.X - R - e.X, 2) + Math.Pow(el.Start.GetPoint.Y - R - e.Y, 2) <= ((R + 2) * (R + 2)))
                             {
                                 fieldGraph.RemoveElement(el);
                                 flag = true;
@@ -183,16 +178,13 @@ namespace Wave_Algorithm
                         }
                         else
                         {
-                            if (((e.X - el.Start.GetPoint.X) * (el.End.GetPoint.Y - el.Start.GetPoint.Y) / (el.End.GetPoint.X - el.Start.GetPoint.X) + el.Start.GetPoint.Y) <= (e.Y + 4)
-                                && ((e.X - el.Start.GetPoint.X) * (el.End.GetPoint.Y - el.Start.GetPoint.Y) / (el.End.GetPoint.X - el.Start.GetPoint.X) + el.Start.GetPoint.Y) >= (e.Y - 4))
+                            float regionOfClick = (e.X - el.Start.GetPoint.X) * (el.End.GetPoint.Y - el.Start.GetPoint.Y) / (el.End.GetPoint.X - el.Start.GetPoint.X) + el.Start.GetPoint.Y;
+
+                            if (regionOfClick <= (e.Y + 4) && regionOfClick >= (e.Y - 4))
                             {
-                                if ((el.Start.GetPoint.X <= el.End.GetPoint.X && el.Start.GetPoint.X <= e.X && e.X <= el.End.GetPoint.X) ||
-                                    (el.Start.GetPoint.X >= el.End.GetPoint.X && el.Start.GetPoint.X >= e.X && e.X >= el.End.GetPoint.X))
-                                {
-                                    fieldGraph.RemoveElement(el);
-                                    flag = true;
-                                    break;
-                                }
+                                fieldGraph.RemoveElement(el);
+                                flag = true;
+                                break;
                             }
                         }
                     }
@@ -200,9 +192,9 @@ namespace Wave_Algorithm
 
                 if (flag)
                 {
-                    graphics.Clear(Color.White);
+                    _graphics.Clear(Color.White);
                     DrawAllGraph();
-                    pictureBox1.Image = bitmap;
+                    pictureBox1.Image = _bitmap;
                 }
             }
         }
@@ -212,9 +204,9 @@ namespace Wave_Algorithm
             DrawVertexButton.Enabled = false;
             DrawEdgeButton.Enabled = true;
             DeleteElementButton.Enabled = true;
-            graphics.Clear(Color.White);
+            _graphics.Clear(Color.White);
             DrawAllGraph();
-            pictureBox1.Image = bitmap;
+            pictureBox1.Image = _bitmap;
         }
 
         private void DrawEdgeButton_Click(object sender, EventArgs e)
@@ -222,9 +214,9 @@ namespace Wave_Algorithm
             DrawEdgeButton.Enabled = false;
             DrawVertexButton.Enabled = true;
             DeleteElementButton.Enabled = true;
-            graphics.Clear(Color.White);
+            _graphics.Clear(Color.White);
             DrawAllGraph();
-            pictureBox1.Image = bitmap;
+            pictureBox1.Image = _bitmap;
         }
 
         private void DeleteElementButton_Click(object sender, EventArgs e)
@@ -232,9 +224,9 @@ namespace Wave_Algorithm
             DeleteElementButton.Enabled = false;
             DrawVertexButton.Enabled = true;
             DrawEdgeButton.Enabled = true;
-            graphics.Clear(Color.White);
+            _graphics.Clear(Color.White);
             DrawAllGraph();
-            pictureBox1.Image = bitmap;
+            pictureBox1.Image = _bitmap;
         }
 
         private int[,] FillAdjacencyMatrix()
@@ -251,10 +243,12 @@ namespace Wave_Algorithm
             return matrix;
         }
         
-        private void DFSchain(int u, int endV, int[] color, string s)
+        private void DFSchain(int u, int numberEndVertex, int[] color, string s)
         {
-            if (u != endV)
+            if (u != numberEndVertex)
+            {
                 color[u] = 2;
+            }
             else
             {
                 _chainList.Add(s);
@@ -265,35 +259,47 @@ namespace Wave_Algorithm
             {
                 if (color[el.End.GetNumber] == 1 && el.Start.GetNumber == u)
                 {
-                    DFSchain(el.End.GetNumber, endV, color, s + (el.End.GetNumber + 1).ToString());
-                    color[el.End.GetNumber] = 1;
+                    AddChain(numberEndVertex, color, s, el.End.GetNumber);
                 }
                 else if (color[el.Start.GetNumber] == 1 && el.End.GetNumber == u)
                 {
-                    DFSchain(el.Start.GetNumber, endV, color, s + (el.Start.GetNumber + 1).ToString());
-                    color[el.Start.GetNumber] = 1;
+                    AddChain(numberEndVertex, color, s, el.Start.GetNumber);
                 }
             }
+        }
+
+        private void AddChain(int endV, int[] color, string s, int numberVertex)
+        {
+            DFSchain(numberVertex, endV, color, s + (numberVertex + 1).ToString());
+            color[numberVertex] = 1;
         }
 
         private void SearchAllWaysButton_Click(object sender, EventArgs e)
         {
             _chainList.Clear();
+
             int[] color = new int[Vertex.Vertices.Count];
             for (int i = 0; i < Vertex.Vertices.Count - 1; i++)
+            {
                 for (int j = i + 1; j < Vertex.Vertices.Count; j++)
                 {
                     for (int k = 0; k < Vertex.Vertices.Count; k++)
+                    {
                         color[k] = 1;
+                    }
+
                     DFSchain(i, j, color, (i + 1).ToString());
                 }
-            List<string> newChainList = new List<string>();
+            }
 
+            List<string> newChainList = new List<string>();
             foreach (string i in _chainList)
             {
                 if (i.StartsWith(StartVertexNumberTextBox.Text) && i.EndsWith(TargetVertexNumberTextBox.Text))
+                {
                     newChainList.Add(i);
-                if (i.EndsWith(StartVertexNumberTextBox.Text) && i.StartsWith(TargetVertexNumberTextBox.Text))
+                }    
+                else if (i.EndsWith(StartVertexNumberTextBox.Text) && i.StartsWith(TargetVertexNumberTextBox.Text))
                 {
                     char[] arr = i.ToCharArray();
                     Array.Reverse(arr);
@@ -301,6 +307,7 @@ namespace Wave_Algorithm
                     newChainList.Add(j);
                 }
             }
+
             ListAllWaysListBox.Items.Clear();
             foreach (string i in newChainList)
             {
@@ -318,17 +325,28 @@ namespace Wave_Algorithm
             int[] p = new int[AMatrix.GetLength(0)];
 
             for (int i = 0; i < AMatrix.GetLength(0); i++)
+            {
                 p[i] = -1;
+            }
 
             p[start] = 0;
             for (int i = 0; i < AMatrix.GetLength(0); i++)
+            {
                 for (k = 0; k < AMatrix.GetLength(0); k++)
+                {
                     if (p[k] == i)
+                    {
                         for (j = 0; j < AMatrix.GetLength(0); j++)
                         {
                             if (p[j] == -1 && AMatrix[j, k] == 1)
+                            {
                                 p[j] = i + 1;
+                            }
                         }
+                    }
+                }
+            }
+
             for (int i = 0; i < AMatrix.GetLength(0); i++)
             {
                 if (i == target)
