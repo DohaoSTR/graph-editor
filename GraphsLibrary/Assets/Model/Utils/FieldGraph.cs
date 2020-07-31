@@ -1,7 +1,7 @@
 ﻿using GraphModel.Assets.Model.GraphElements;
 using System;
 
-namespace GraphModel.Assets.Model
+namespace GraphsLibrary.Assets.Model.Utils
 {
     public class FieldGraph
     {

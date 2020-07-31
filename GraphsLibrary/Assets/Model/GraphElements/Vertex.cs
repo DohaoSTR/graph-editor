@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GraphsLibrary.Assets.Model.Utils;
+using System;
 using System.Collections.Generic;
 
 namespace GraphModel.Assets.Model.GraphElements
@@ -20,7 +21,7 @@ namespace GraphModel.Assets.Model.GraphElements
                         return i;
                     }
                 }
-                throw new Exception("Вершина не найдена!");
+                throw new ArgumentNullException("Вершина не найдена!");
             }
         }
 

@@ -1,10 +1,10 @@
-﻿using GraphModel.Assets.Model;
-using GraphModel.Assets.Model.GraphElements;
+﻿using GraphModel.Assets.Model.GraphElements;
+using GraphsLibrary.Assets.Model.Utils;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using Point = GraphModel.Assets.Model.Point;
+using Point = GraphsLibrary.Assets.Model.Utils.Point;
 
 namespace Wave_Algorithm
 {
@@ -22,10 +22,22 @@ namespace Wave_Algorithm
         private PointF _pointF;
         private const int R = 20; 
 
-        private readonly FieldGraph fieldGraph;
+        private readonly FieldGraph _fieldGraph;
+
+        private AdjacencyMatrix Matrix
+        {
+            get
+            {
+                return new AdjacencyMatrix((List<Vertex>)Vertex.Vertices, (List<Edge>)Edge.Edges);
+            }
+        }
 
         private Vertex _first;
         private Vertex _second;
+
+        private int StartVertexNumber => Convert.ToInt32(StartVertexNumberTextBox.Text);
+
+        private int TargetVertexNumber => Convert.ToInt32(TargetVertexNumberTextBox.Text);
 
         public GraphWindow()
         {
@@ -54,7 +66,7 @@ namespace Wave_Algorithm
             _font = new Font("Arial", 15);
             _brush = Brushes.Black;
 
-            fieldGraph = new FieldGraph();
+            _fieldGraph = new FieldGraph();
 
             pictureBox1.Image = _bitmap;
         }
@@ -105,7 +117,7 @@ namespace Wave_Algorithm
             if (!DrawVertexButton.Enabled)
             {
                 Vertex vertexToAdd = new Vertex(new Point(e.X, e.Y));
-                fieldGraph.AddElement(vertexToAdd);
+                _fieldGraph.AddElement(vertexToAdd);
                 DrawVertex(vertexToAdd);
                 pictureBox1.Image = _bitmap;
             } 
@@ -131,12 +143,12 @@ namespace Wave_Algorithm
 
                                 if (_first == _second)
                                 {
-                                    fieldGraph.AddElement(new Loop(el));
+                                    _fieldGraph.AddElement(new Loop(el));
                                     DrawLoop(new Loop(el));
                                 }
                                 else
                                 {
-                                    fieldGraph.AddElement(new Edge(_first, _second));
+                                    _fieldGraph.AddElement(new Edge(_first, _second));
                                     DrawEdge(new Edge(_first, _second));
                                 }
 
@@ -157,7 +169,7 @@ namespace Wave_Algorithm
                 {
                     if (Math.Pow(el.GetPoint.X - e.X, 2) + Math.Pow(el.GetPoint.Y - e.Y, 2) <= R * R)
                     {
-                        fieldGraph.RemoveElement(el);
+                        _fieldGraph.RemoveElement(el);
                         flag = true;
                         break;
                     }
@@ -171,7 +183,7 @@ namespace Wave_Algorithm
                         {
                             if (Math.Pow(el.Start.GetPoint.X - R - e.X, 2) + Math.Pow(el.Start.GetPoint.Y - R - e.Y, 2) <= ((R + 2) * (R + 2)))
                             {
-                                fieldGraph.RemoveElement(el);
+                                _fieldGraph.RemoveElement(el);
                                 flag = true;
                                 break;
                             }
@@ -182,7 +194,7 @@ namespace Wave_Algorithm
 
                             if (regionOfClick <= (e.Y + 4) && regionOfClick >= (e.Y - 4))
                             {
-                                fieldGraph.RemoveElement(el);
+                                _fieldGraph.RemoveElement(el);
                                 flag = true;
                                 break;
                             }
@@ -227,20 +239,6 @@ namespace Wave_Algorithm
             _graphics.Clear(Color.White);
             DrawAllGraph();
             pictureBox1.Image = _bitmap;
-        }
-
-        private int[,] FillAdjacencyMatrix()
-        {
-            int[,] matrix = new int[Vertex.Vertices.Count, Vertex.Vertices.Count];
-            for (int i = 0; i < Vertex.Vertices.Count; i++)
-                for (int j = 0; j < Vertex.Vertices.Count; j++)
-                    matrix[i, j] = 0;
-            foreach(var el in Edge.Edges)
-            {
-                matrix[el.Start.GetNumber, el.End.GetNumber] = 1;
-                matrix[el.End.GetNumber, el.Start.GetNumber] = 1;
-            }
-            return matrix;
         }
         
         private void DFSchain(int u, int numberEndVertex, int[] color, string s)
@@ -317,43 +315,8 @@ namespace Wave_Algorithm
 
         private void FindShortWayButton_Click(object sender, EventArgs e)
         {
-            int[,] AMatrix = FillAdjacencyMatrix();
-            int k, j;
-
-            int start = Convert.ToInt32(StartVertexNumberTextBox.Text) - 1;
-            int target = Convert.ToInt32(TargetVertexNumberTextBox.Text) - 1;
-            int[] p = new int[AMatrix.GetLength(0)];
-
-            for (int i = 0; i < AMatrix.GetLength(0); i++)
-            {
-                p[i] = -1;
-            }
-
-            p[start] = 0;
-            for (int i = 0; i < AMatrix.GetLength(0); i++)
-            {
-                for (k = 0; k < AMatrix.GetLength(0); k++)
-                {
-                    if (p[k] == i)
-                    {
-                        for (j = 0; j < AMatrix.GetLength(0); j++)
-                        {
-                            if (p[j] == -1 && AMatrix[j, k] == 1)
-                            {
-                                p[j] = i + 1;
-                            }
-                        }
-                    }
-                }
-            }
-
-            for (int i = 0; i < AMatrix.GetLength(0); i++)
-            {
-                if (i == target)
-                {
-                    MessageBox.Show("Кратчайший путь от вершины " + (start + 1) + " до вершины " + (target + 1) + " равен: " + p[i] + ".");
-                }
-            }
+            MessageBox.Show("Кратчайший путь от вершины " + StartVertexNumber + " до вершины " + TargetVertexNumber + 
+                            " равен: " + Matrix.SearchShortestWay(StartVertexNumber, TargetVertexNumber) + ".");
         }
     }
 }

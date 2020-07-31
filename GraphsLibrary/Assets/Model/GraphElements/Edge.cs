@@ -7,7 +7,7 @@ namespace GraphModel.Assets.Model.GraphElements
         private static readonly List<Edge> _edges = new List<Edge>();
 
         public static IReadOnlyCollection<Edge> Edges => _edges;
-        
+
         public Vertex Start { get; }
 
         public Vertex End { get; }
