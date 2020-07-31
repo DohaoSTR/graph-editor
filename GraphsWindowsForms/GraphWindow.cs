@@ -6,7 +6,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Point = GraphsLibrary.Assets.Model.Utils.Point;
 
-namespace Wave_Algorithm
+namespace GraphsWindowForms
 {
     public partial class GraphWindow : Form
     {
@@ -20,7 +20,7 @@ namespace Wave_Algorithm
         private readonly Font _font;
         private readonly Brush _brush;
         private PointF _pointF;
-        private const int R = 20; 
+        private const int R = 20;
 
         private readonly FieldGraph _fieldGraph;
 
@@ -120,7 +120,7 @@ namespace Wave_Algorithm
                 _fieldGraph.AddElement(vertexToAdd);
                 DrawVertex(vertexToAdd);
                 pictureBox1.Image = _bitmap;
-            } 
+            }
             else if (!DrawEdgeButton.Enabled)
             {
                 if (e.Button == MouseButtons.Left)
@@ -179,7 +179,7 @@ namespace Wave_Algorithm
                 {
                     foreach (var el in Edge.Edges)
                     {
-                        if (el is Loop) 
+                        if (el is Loop)
                         {
                             if (Math.Pow(el.Start.GetPoint.X - R - e.X, 2) + Math.Pow(el.Start.GetPoint.Y - R - e.Y, 2) <= ((R + 2) * (R + 2)))
                             {
@@ -240,7 +240,7 @@ namespace Wave_Algorithm
             DrawAllGraph();
             pictureBox1.Image = _bitmap;
         }
-        
+
         private void DFSchain(int u, int numberEndVertex, int[] color, string s)
         {
             if (u != numberEndVertex)
@@ -296,7 +296,7 @@ namespace Wave_Algorithm
                 if (i.StartsWith(StartVertexNumberTextBox.Text) && i.EndsWith(TargetVertexNumberTextBox.Text))
                 {
                     newChainList.Add(i);
-                }    
+                }
                 else if (i.EndsWith(StartVertexNumberTextBox.Text) && i.StartsWith(TargetVertexNumberTextBox.Text))
                 {
                     char[] arr = i.ToCharArray();
@@ -315,7 +315,7 @@ namespace Wave_Algorithm
 
         private void FindShortWayButton_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Кратчайший путь от вершины " + StartVertexNumber + " до вершины " + TargetVertexNumber + 
+            MessageBox.Show("Кратчайший путь от вершины " + StartVertexNumber + " до вершины " + TargetVertexNumber +
                             " равен: " + Matrix.SearchShortestWay(StartVertexNumber, TargetVertexNumber) + ".");
         }
     }

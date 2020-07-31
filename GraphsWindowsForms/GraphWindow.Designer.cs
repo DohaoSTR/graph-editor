@@ -1,4 +1,4 @@
-﻿namespace Wave_Algorithm
+﻿namespace GraphsWindowForms
 {
     partial class GraphWindow
     {
