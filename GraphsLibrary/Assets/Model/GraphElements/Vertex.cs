@@ -25,7 +25,7 @@ namespace GraphModel.Assets.Model.GraphElements
             List<Edge> edges = new List<Edge>(Edge.Edges);
             foreach (Edge edge in edges)
             {
-                if (edge.First == this || edge.Second == this)
+                if (edge.Start == this || edge.End == this)
                 {
                     edge.Remove();
                 }

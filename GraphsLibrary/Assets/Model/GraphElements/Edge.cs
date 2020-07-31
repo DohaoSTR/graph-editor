@@ -8,14 +8,14 @@ namespace GraphModel.Assets.Model.GraphElements
 
         public static IReadOnlyCollection<Edge> Edges => _edges;
         
-        public Vertex First { get; }
+        public Vertex Start { get; }
 
-        public Vertex Second { get; }
+        public Vertex End { get; }
 
         public Edge(Vertex first, Vertex second)
         {
-            First = first;
-            Second = second;
+            Start = first;
+            End = second;
         }
 
         public override void Add() => _edges.Add(this);

@@ -60,11 +60,11 @@ namespace Wave_Algorithm
             int i = 0;
             foreach (Vertex element in Vertex.Vertices)
             {
-                i++;
                 if (element == vertex)
                 {
                     return i;
                 }
+                i++;
             }
             throw new Exception("Вершина не найдена!");
         }
@@ -74,20 +74,20 @@ namespace Wave_Algorithm
             graphics.FillEllipse(Brushes.White, (vertex.GetPoint.X - R), (vertex.GetPoint.Y - R), 2 * R, 2 * R);
             graphics.DrawEllipse(blackPen, (vertex.GetPoint.X - R), (vertex.GetPoint.Y - R), 2 * R, 2 * R);
             pointf = new PointF(vertex.GetPoint.X - 9, vertex.GetPoint.Y - 9);
-            graphics.DrawString(GetNumberOfVertex(vertex).ToString(), font, brush, pointf);
+            graphics.DrawString((GetNumberOfVertex(vertex) + 1).ToString(), font, brush, pointf);
         }
 
         private void DrawEdge(Edge edge)
         {
-            graphics.DrawLine(darkGoldPen, edge.First.GetPoint.X, edge.First.GetPoint.Y, edge.Second.GetPoint.X, edge.Second.GetPoint.Y);
-            DrawVertex(edge.First);
-            DrawVertex(edge.Second);
+            graphics.DrawLine(darkGoldPen, edge.Start.GetPoint.X, edge.Start.GetPoint.Y, edge.End.GetPoint.X, edge.End.GetPoint.Y);
+            DrawVertex(edge.Start);
+            DrawVertex(edge.End);
         }
 
         private void DrawLoop(Loop loop)
         {
-            graphics.DrawArc(darkGoldPen, loop.First.GetPoint.X - 2 * R, loop.First.GetPoint.Y - 2 * R, 2 * R, 2 * R, 90, 270);
-            DrawVertex(loop.First);
+            graphics.DrawArc(darkGoldPen, loop.Start.GetPoint.X - 2 * R, loop.Start.GetPoint.Y - 2 * R, 2 * R, 2 * R, 90, 270);
+            DrawVertex(loop.Start);
         }
 
         private void DrawAllGraph()
@@ -187,8 +187,8 @@ namespace Wave_Algorithm
                     {
                         if (el is Loop) 
                         {
-                            if ((Math.Pow(el.First.GetPoint.X - R - e.X, 2) + Math.Pow(el.First.GetPoint.Y - R - e.Y, 2) <= ((R + 2) * (R + 2))) &&
-                                (Math.Pow(el.First.GetPoint.X - R - e.X, 2) + Math.Pow(el.First.GetPoint.Y - R - e.Y, 2) >= ((R - 2) * (R - 2))))
+                            if ((Math.Pow(el.Start.GetPoint.X - R - e.X, 2) + Math.Pow(el.Start.GetPoint.Y - R - e.Y, 2) <= ((R + 2) * (R + 2))) &&
+                                (Math.Pow(el.Start.GetPoint.X - R - e.X, 2) + Math.Pow(el.Start.GetPoint.Y - R - e.Y, 2) >= ((R - 2) * (R - 2))))
                             {
                                 fieldGraph.RemoveElement(el);
                                 flag = true;
@@ -197,11 +197,11 @@ namespace Wave_Algorithm
                         }
                         else
                         {
-                            if (((e.X - el.First.GetPoint.X) * (el.Second.GetPoint.Y - el.First.GetPoint.Y) / (el.Second.GetPoint.X - el.First.GetPoint.X) + el.First.GetPoint.Y) <= (e.Y + 4)
-                                && ((e.X - el.First.GetPoint.X) * (el.Second.GetPoint.Y - el.First.GetPoint.Y) / (el.Second.GetPoint.X - el.First.GetPoint.X) + el.First.GetPoint.Y) >= (e.Y - 4))
+                            if (((e.X - el.Start.GetPoint.X) * (el.End.GetPoint.Y - el.Start.GetPoint.Y) / (el.End.GetPoint.X - el.Start.GetPoint.X) + el.Start.GetPoint.Y) <= (e.Y + 4)
+                                && ((e.X - el.Start.GetPoint.X) * (el.End.GetPoint.Y - el.Start.GetPoint.Y) / (el.End.GetPoint.X - el.Start.GetPoint.X) + el.Start.GetPoint.Y) >= (e.Y - 4))
                             {
-                                if ((el.First.GetPoint.X <= el.Second.GetPoint.X && el.First.GetPoint.X <= e.X && e.X <= el.Second.GetPoint.X) ||
-                                    (el.First.GetPoint.X >= el.Second.GetPoint.X && el.First.GetPoint.X >= e.X && e.X >= el.Second.GetPoint.X))
+                                if ((el.Start.GetPoint.X <= el.End.GetPoint.X && el.Start.GetPoint.X <= e.X && e.X <= el.End.GetPoint.X) ||
+                                    (el.Start.GetPoint.X >= el.End.GetPoint.X && el.Start.GetPoint.X >= e.X && e.X >= el.End.GetPoint.X))
                                 {
                                     fieldGraph.RemoveElement(el);
                                     flag = true;
@@ -259,13 +259,13 @@ namespace Wave_Algorithm
                     matrix[i, j] = 0;
             foreach(var el in Edge.Edges)
             {
-                matrix[GetNumberOfVertex(el.First), GetNumberOfVertex(el.Second)] = 1;
-                matrix[GetNumberOfVertex(el.Second), GetNumberOfVertex(el.First)] = 1;
+                matrix[GetNumberOfVertex(el.Start), GetNumberOfVertex(el.End)] = 1;
+                matrix[GetNumberOfVertex(el.End), GetNumberOfVertex(el.Start)] = 1;
             }
             return matrix;
         }
         
-        private void DFSchain(int u, int endV, List<Edge> E, int[] color, string s)
+        private void DFSchain(int u, int endV, int[] color, string s)
         {
             if (u != endV)
                 color[u] = 2;
@@ -277,15 +277,15 @@ namespace Wave_Algorithm
             }
             foreach (var el in Edge.Edges)
             {
-                if (GetNumberOfVertex(el.First) == 1 && GetNumberOfVertex(el.First) == u)
+                if (color[GetNumberOfVertex(el.End)] == 1 && GetNumberOfVertex(el.Start) == u)
                 {
-                    DFSchain(GetNumberOfVertex(el.Second), endV, E, color, s + (GetNumberOfVertex(el.Second) + 1).ToString());
-                    color[GetNumberOfVertex(el.Second)] = 1;
+                    DFSchain(GetNumberOfVertex(el.End), endV, color, s + (GetNumberOfVertex(el.End) + 1).ToString());
+                    color[GetNumberOfVertex(el.End)] = 1;
                 }
-                else if (GetNumberOfVertex(el.First) == 1 && GetNumberOfVertex(el.Second) == u)
+                else if (color[GetNumberOfVertex(el.Start)] == 1 && GetNumberOfVertex(el.End) == u)
                 {
-                    DFSchain(GetNumberOfVertex(el.First), endV, E, color, s + (GetNumberOfVertex(el.First) + 1).ToString());
-                    color[GetNumberOfVertex(el.First)] = 1;
+                    DFSchain(GetNumberOfVertex(el.Start), endV, color, s + (GetNumberOfVertex(el.Start) + 1).ToString());
+                    color[GetNumberOfVertex(el.Start)] = 1;
                 }
             }
         }
@@ -299,7 +299,7 @@ namespace Wave_Algorithm
                 {
                     for (int k = 0; k < Vertex.Vertices.Count; k++)
                         color[k] = 1;
-                    DFSchain(i, j, (List<Edge>)Edge.Edges, color, (i + 1).ToString());
+                    DFSchain(i, j, color, (i + 1).ToString());
                 }
             List<string> newChainList = new List<string>();
 
