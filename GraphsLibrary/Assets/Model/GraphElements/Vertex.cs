@@ -9,7 +9,7 @@ namespace GraphModel.Assets.Model.GraphElements
 
         public static IReadOnlyCollection<Vertex> Vertices => _vertices;
 
-        public int GetNumberOfVertex
+        public int GetNumber
         {
             get
             {
@@ -32,11 +32,11 @@ namespace GraphModel.Assets.Model.GraphElements
 
         public override void Remove()
         {
-            CheckVertexForEdges();
+            RemoveEdges();
             _vertices.Remove(this);
         }
 
-        private void CheckVertexForEdges()
+        private void RemoveEdges()
         {
             List<Edge> edges = new List<Edge>(Edge.Edges);
             foreach (Edge edge in edges)

@@ -60,7 +60,7 @@ namespace Wave_Algorithm
             graphics.FillEllipse(Brushes.White, (vertex.GetPoint.X - R), (vertex.GetPoint.Y - R), 2 * R, 2 * R);
             graphics.DrawEllipse(blackPen, (vertex.GetPoint.X - R), (vertex.GetPoint.Y - R), 2 * R, 2 * R);
             pointf = new PointF(vertex.GetPoint.X - 9, vertex.GetPoint.Y - 9);
-            graphics.DrawString((vertex.GetNumberOfVertex + 1).ToString(), font, brush, pointf);
+            graphics.DrawString((vertex.GetNumber + 1).ToString(), font, brush, pointf);
         }
 
         private void DrawEdge(Edge edge)
@@ -245,8 +245,8 @@ namespace Wave_Algorithm
                     matrix[i, j] = 0;
             foreach(var el in Edge.Edges)
             {
-                matrix[el.Start.GetNumberOfVertex, el.End.GetNumberOfVertex] = 1;
-                matrix[el.End.GetNumberOfVertex, el.Start.GetNumberOfVertex] = 1;
+                matrix[el.Start.GetNumber, el.End.GetNumber] = 1;
+                matrix[el.End.GetNumber, el.Start.GetNumber] = 1;
             }
             return matrix;
         }
@@ -263,15 +263,15 @@ namespace Wave_Algorithm
             }
             foreach (var el in Edge.Edges)
             {
-                if (color[el.End.GetNumberOfVertex] == 1 && el.Start.GetNumberOfVertex == u)
+                if (color[el.End.GetNumber] == 1 && el.Start.GetNumber == u)
                 {
-                    DFSchain(el.End.GetNumberOfVertex, endV, color, s + (el.End.GetNumberOfVertex + 1).ToString());
-                    color[el.End.GetNumberOfVertex] = 1;
+                    DFSchain(el.End.GetNumber, endV, color, s + (el.End.GetNumber + 1).ToString());
+                    color[el.End.GetNumber] = 1;
                 }
-                else if (color[el.Start.GetNumberOfVertex] == 1 && el.End.GetNumberOfVertex == u)
+                else if (color[el.Start.GetNumber] == 1 && el.End.GetNumber == u)
                 {
-                    DFSchain(el.Start.GetNumberOfVertex, endV, color, s + (el.Start.GetNumberOfVertex + 1).ToString());
-                    color[el.Start.GetNumberOfVertex] = 1;
+                    DFSchain(el.Start.GetNumber, endV, color, s + (el.Start.GetNumber + 1).ToString());
+                    color[el.Start.GetNumber] = 1;
                 }
             }
         }
