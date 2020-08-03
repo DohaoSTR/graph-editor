@@ -2,8 +2,5 @@
 {
     public interface IElement
     {
-        void Add();
-
-        void Remove();
     }
 }
