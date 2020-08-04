@@ -1,4 +1,5 @@
 ﻿using GraphModel.Assets.Model.GraphElements;
+using GraphsLibrary.Assets.Model.GraphElements;
 using GraphsLibrary.Assets.Model.Utils;
 using System;
 using System.Collections.Generic;
@@ -22,13 +23,14 @@ namespace GraphsWindowForms
         private PointF _pointF;
         private const int R = 20;
 
-        private readonly FieldGraph _fieldGraph;
+        private ElementContainer<Vertex> _vertices;
+        private ElementContainer<Edge> _edges;
 
         private AdjacencyMatrix Matrix
         {
             get
             {
-                return new AdjacencyMatrix((List<Vertex>)Vertex.Vertices, (List<Edge>)Edge.Edges);
+                return new AdjacencyMatrix(_vertices, _edges);
             }
         }
 
@@ -66,7 +68,8 @@ namespace GraphsWindowForms
             _font = new Font("Arial", 15);
             _brush = Brushes.Black;
 
-            _fieldGraph = new FieldGraph();
+            _vertices = new ElementContainer<Vertex>();
+            _edges = new ElementContainer<Edge>();
 
             pictureBox1.Image = _bitmap;
         }
@@ -76,7 +79,7 @@ namespace GraphsWindowForms
             _graphics.FillEllipse(Brushes.White, (vertex.GetPoint.X - R), (vertex.GetPoint.Y - R), 2 * R, 2 * R);
             _graphics.DrawEllipse(_blackPen, (vertex.GetPoint.X - R), (vertex.GetPoint.Y - R), 2 * R, 2 * R);
             _pointF = new PointF(vertex.GetPoint.X - 9, vertex.GetPoint.Y - 9);
-            _graphics.DrawString((vertex.GetNumber + 1).ToString(), _font, _brush, _pointF);
+            _graphics.DrawString((_vertices.IndexOf(vertex) + 1).ToString(), _font, _brush, _pointF);
         }
 
         private void DrawEdge(Edge edge)
@@ -94,7 +97,7 @@ namespace GraphsWindowForms
 
         private void DrawAllGraph()
         {
-            foreach (var edge in Edge.Edges)
+            foreach (var edge in _edges)
             {
                 if (edge is Loop loop)
                 {
@@ -106,7 +109,7 @@ namespace GraphsWindowForms
                 }
             }
 
-            foreach (var vertex in Vertex.Vertices)
+            foreach (var vertex in _vertices)
             {
                 DrawVertex(vertex);
             }
@@ -117,7 +120,7 @@ namespace GraphsWindowForms
             if (!DrawVertexButton.Enabled)
             {
                 Vertex vertexToAdd = new Vertex(new Point(e.X, e.Y));
-                _fieldGraph.AddElement(vertexToAdd);
+                _vertices.Add(vertexToAdd);
                 DrawVertex(vertexToAdd);
                 pictureBox1.Image = _bitmap;
             }
@@ -125,7 +128,7 @@ namespace GraphsWindowForms
             {
                 if (e.Button == MouseButtons.Left)
                 {
-                    foreach (var el in Vertex.Vertices)
+                    foreach (var el in _vertices)
                     {
                         if (Math.Pow(el.GetPoint.X - e.X, 2) + Math.Pow(el.GetPoint.Y - e.Y, 2) <= R * R)
                         {
@@ -143,12 +146,12 @@ namespace GraphsWindowForms
 
                                 if (_first == _second)
                                 {
-                                    _fieldGraph.AddElement(new Loop(el));
+                                    _edges.Add(new Loop(el));
                                     DrawLoop(new Loop(el));
                                 }
                                 else
                                 {
-                                    _fieldGraph.AddElement(new Edge(_first, _second));
+                                    _edges.Add(new Edge(_first, _second));
                                     DrawEdge(new Edge(_first, _second));
                                 }
 
@@ -165,11 +168,11 @@ namespace GraphsWindowForms
             {
                 bool flag = false;
 
-                foreach (var el in Vertex.Vertices)
+                foreach (var el in _vertices)
                 {
                     if (Math.Pow(el.GetPoint.X - e.X, 2) + Math.Pow(el.GetPoint.Y - e.Y, 2) <= R * R)
                     {
-                        _fieldGraph.RemoveElement(el);
+                        _vertices.Remove(el);
                         flag = true;
                         break;
                     }
@@ -177,13 +180,13 @@ namespace GraphsWindowForms
 
                 if (!flag)
                 {
-                    foreach (var el in Edge.Edges)
+                    foreach (var el in _edges)
                     {
                         if (el is Loop)
                         {
                             if (Math.Pow(el.Start.GetPoint.X - R - e.X, 2) + Math.Pow(el.Start.GetPoint.Y - R - e.Y, 2) <= ((R + 2) * (R + 2)))
                             {
-                                _fieldGraph.RemoveElement(el);
+                                _edges.Remove(el);
                                 flag = true;
                                 break;
                             }
@@ -194,7 +197,7 @@ namespace GraphsWindowForms
 
                             if (regionOfClick <= (e.Y + 4) && regionOfClick >= (e.Y - 4))
                             {
-                                _fieldGraph.RemoveElement(el);
+                                _edges.Remove(el);
                                 flag = true;
                                 break;
                             }
@@ -253,15 +256,15 @@ namespace GraphsWindowForms
                 ListAllWaysListBox.Items.Add(s);
                 return;
             }
-            foreach (var el in Edge.Edges)
+            foreach (var el in _edges)
             {
-                if (color[el.End.GetNumber] == 1 && el.Start.GetNumber == u)
+                if (color[_vertices.IndexOf(el.End)] == 1 && _vertices.IndexOf(el.Start) == u)
                 {
-                    AddChain(numberEndVertex, color, s, el.End.GetNumber);
+                    AddChain(numberEndVertex, color, s, _vertices.IndexOf(el.End));
                 }
-                else if (color[el.Start.GetNumber] == 1 && el.End.GetNumber == u)
+                else if (color[_vertices.IndexOf(el.Start)] == 1 && _vertices.IndexOf(el.End) == u)
                 {
-                    AddChain(numberEndVertex, color, s, el.Start.GetNumber);
+                    AddChain(numberEndVertex, color, s, _vertices.IndexOf(el.Start));
                 }
             }
         }
@@ -276,12 +279,12 @@ namespace GraphsWindowForms
         {
             _chainList.Clear();
 
-            int[] color = new int[Vertex.Vertices.Count];
-            for (int i = 0; i < Vertex.Vertices.Count - 1; i++)
+            int[] color = new int[_vertices.Count];
+            for (int i = 0; i < _vertices.Count - 1; i++)
             {
-                for (int j = i + 1; j < Vertex.Vertices.Count; j++)
+                for (int j = i + 1; j < _vertices.Count; j++)
                 {
-                    for (int k = 0; k < Vertex.Vertices.Count; k++)
+                    for (int k = 0; k < _vertices.Count; k++)
                     {
                         color[k] = 1;
                     }

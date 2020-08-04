@@ -1,6 +1,6 @@
 ﻿using GraphModel.Assets.Model.GraphElements;
+using GraphsLibrary.Assets.Model.GraphElements;
 using System;
-using System.Collections.Generic;
 
 namespace GraphsLibrary.Assets.Model.Utils
 {
@@ -8,8 +8,8 @@ namespace GraphsLibrary.Assets.Model.Utils
     {
         private readonly int[,] _matrix;
 
-        private readonly List<Vertex> _vertices;
-        private readonly List<Edge> _edges;
+        private readonly ElementContainer<Vertex> _vertices;
+        private readonly ElementContainer<Edge> _edges;
 
         public int this[int indexVertex, int indexEdge]
         {
@@ -23,7 +23,7 @@ namespace GraphsLibrary.Assets.Model.Utils
             }
         }
 
-        public AdjacencyMatrix(List<Vertex> vertices, List<Edge> edges)
+        public AdjacencyMatrix(ElementContainer<Vertex> vertices, ElementContainer<Edge> edges)
         {
             _vertices = vertices;
             _edges = edges;
@@ -44,8 +44,8 @@ namespace GraphsLibrary.Assets.Model.Utils
 
             foreach (var element in _edges)
             {
-                _matrix[element.Start.GetNumber, element.End.GetNumber] = 1;
-                _matrix[element.End.GetNumber, element.Start.GetNumber] = 1;
+                _matrix[_vertices.IndexOf(element.Start), _vertices.IndexOf(element.End)] = 1;
+                _matrix[_vertices.IndexOf(element.End), _vertices.IndexOf(element.Start)] = 1;
             }
         }
 

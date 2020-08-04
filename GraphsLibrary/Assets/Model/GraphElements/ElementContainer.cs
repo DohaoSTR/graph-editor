@@ -1,17 +1,40 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace GraphsLibrary.Assets.Model.GraphElements
 {
-    public class ElementContainer<IElement>
+    public class ElementContainer<IElement> : IEnumerable<IElement>
     {
+        public IEnumerator<IElement> GetEnumerator()
+        {
+            foreach (var element in _elements)
+            {
+                yield return element;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)this).GetEnumerator();
+
         public event Action<IElement> ElementAdded;
 
         public event Action<IElement> ElementRemoved;
 
         private readonly List<IElement> _elements;
 
-        public IReadOnlyCollection<IElement> Elements => _elements;
+        public IElement this[int index]
+        {
+            set
+            {
+                _elements[index] = value;
+            }
+            get
+            {
+                return _elements[index];
+            }
+        }
+
+        public int Count => _elements.Count;
 
         public ElementContainer() => _elements = new List<IElement>();
 
@@ -29,17 +52,7 @@ namespace GraphsLibrary.Assets.Model.GraphElements
             OnRemoveElement(element);
         }
 
-        public int IndexOf(IElement element)
-        {
-            for (int i = 0; i <= _elements.Count; i++)
-            {
-                if (_elements[i].Equals(element))
-                {
-                    return i;
-                }
-            }
-            throw new ArgumentNullException("Элемент не найден!");
-        }
+        public int IndexOf(IElement element) => _elements.IndexOf(element);
 
         private void OnAddElement(IElement element)
         {
