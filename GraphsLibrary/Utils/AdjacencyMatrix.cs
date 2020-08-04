@@ -1,8 +1,7 @@
-﻿using GraphModel.Assets.Model.GraphElements;
-using GraphsLibrary.Assets.Model.GraphElements;
+﻿using GraphsLibrary.GraphElements;
 using System;
 
-namespace GraphsLibrary.Assets.Model.Utils
+namespace GraphsLibrary.Utils
 {
     public class AdjacencyMatrix
     {

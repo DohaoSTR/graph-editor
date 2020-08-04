@@ -1,4 +1,4 @@
-﻿namespace GraphsLibrary.Assets.Model.Utils
+﻿namespace GraphsLibrary.GraphElements
 {
     public class Point
     {

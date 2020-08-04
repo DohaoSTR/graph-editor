@@ -1,4 +1,4 @@
-﻿namespace GraphsLibrary.Assets.Model.GraphElements
+﻿namespace GraphsLibrary.GraphElements
 {
     public class Edge : Element
     {

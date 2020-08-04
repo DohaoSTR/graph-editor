@@ -1,18 +1,15 @@
-﻿using GraphModel.Assets.Model.GraphElements;
-using GraphsLibrary.Assets.Model.GraphElements;
-using GraphsLibrary.Assets.Model.Utils;
+﻿using GraphsLibrary.GraphElements;
+using GraphsLibrary.Utils;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using Point = GraphsLibrary.Assets.Model.Utils.Point;
+using Point = GraphsLibrary.GraphElements.Point;
 
 namespace GraphsWindowForms
 {
     public partial class GraphWindow : Form
     {
-        private readonly List<string> _chainList = new List<string>();
-
         private readonly Bitmap _bitmap;
         private readonly Pen _blackPen;
         private readonly Pen _redPen;
@@ -23,14 +20,13 @@ namespace GraphsWindowForms
         private PointF _pointF;
         private const int R = 20;
 
-        private readonly ElementContainer<Vertex> _vertices;
-        private readonly ElementContainer<Edge> _edges;
+        private readonly Graph _graph;
 
         private AdjacencyMatrix Matrix
         {
             get
             {
-                return new AdjacencyMatrix(_vertices, _edges);
+                return new AdjacencyMatrix(_graph.Vertices, _graph.Edges);
             }
         }
 
@@ -68,8 +64,7 @@ namespace GraphsWindowForms
             _font = new Font("Arial", 15);
             _brush = Brushes.Black;
 
-            _vertices = new ElementContainer<Vertex>();
-            _edges = new ElementContainer<Edge>();
+            _graph = new Graph();
 
             pictureBox1.Image = _bitmap;
         }
@@ -79,7 +74,7 @@ namespace GraphsWindowForms
             _graphics.FillEllipse(Brushes.White, (vertex.Point.X - R), (vertex.Point.Y - R), 2 * R, 2 * R);
             _graphics.DrawEllipse(_blackPen, (vertex.Point.X - R), (vertex.Point.Y - R), 2 * R, 2 * R);
             _pointF = new PointF(vertex.Point.X - 9, vertex.Point.Y - 9);
-            _graphics.DrawString((_vertices.IndexOf(vertex) + 1).ToString(), _font, _brush, _pointF);
+            _graphics.DrawString((_graph.Vertices.IndexOf(vertex) + 1).ToString(), _font, _brush, _pointF);
         }
 
         private void DrawEdge(Edge edge)
@@ -97,7 +92,7 @@ namespace GraphsWindowForms
 
         private void DrawAllGraph()
         {
-            foreach (var edge in _edges)
+            foreach (var edge in _graph.Edges)
             {
                 if (edge is Loop loop)
                 {
@@ -109,7 +104,7 @@ namespace GraphsWindowForms
                 }
             }
 
-            foreach (var vertex in _vertices)
+            foreach (var vertex in _graph.Vertices)
             {
                 DrawVertex(vertex);
             }
@@ -120,7 +115,7 @@ namespace GraphsWindowForms
             if (!DrawVertexButton.Enabled)
             {
                 Vertex vertexToAdd = new Vertex(new Point(e.X, e.Y));
-                _vertices.Add(vertexToAdd);
+                _graph.Vertices.Add(vertexToAdd);
                 DrawVertex(vertexToAdd);
                 pictureBox1.Image = _bitmap;
             }
@@ -128,7 +123,7 @@ namespace GraphsWindowForms
             {
                 if (e.Button == MouseButtons.Left)
                 {
-                    foreach (var el in _vertices)
+                    foreach (var el in _graph.Vertices)
                     {
                         if (Math.Pow(el.Point.X - e.X, 2) + Math.Pow(el.Point.Y - e.Y, 2) <= R * R)
                         {
@@ -146,12 +141,12 @@ namespace GraphsWindowForms
 
                                 if (_first == _second)
                                 {
-                                    _edges.Add(new Loop(el));
+                                    _graph.Edges.Add(new Loop(el));
                                     DrawLoop(new Loop(el));
                                 }
                                 else
                                 {
-                                    _edges.Add(new Edge(_first, _second));
+                                    _graph.Edges.Add(new Edge(_first, _second));
                                     DrawEdge(new Edge(_first, _second));
                                 }
 
@@ -168,11 +163,11 @@ namespace GraphsWindowForms
             {
                 bool flag = false;
 
-                foreach (var el in _vertices)
+                foreach (var el in _graph.Vertices)
                 {
                     if (Math.Pow(el.Point.X - e.X, 2) + Math.Pow(el.Point.Y - e.Y, 2) <= R * R)
                     {
-                        _vertices.Remove(el);
+                        _graph.Vertices.Remove(el);
                         flag = true;
                         break;
                     }
@@ -180,13 +175,13 @@ namespace GraphsWindowForms
 
                 if (!flag)
                 {
-                    foreach (var el in _edges)
+                    foreach (var el in _graph.Edges)
                     {
                         if (el is Loop)
                         {
                             if (Math.Pow(el.Start.Point.X - R - e.X, 2) + Math.Pow(el.Start.Point.Y - R - e.Y, 2) <= ((R + 2) * (R + 2)))
                             {
-                                _edges.Remove(el);
+                                _graph.Edges.Remove(el);
                                 flag = true;
                                 break;
                             }
@@ -197,7 +192,7 @@ namespace GraphsWindowForms
 
                             if (regionOfClick <= (e.Y + 4) && regionOfClick >= (e.Y - 4))
                             {
-                                _edges.Remove(el);
+                                _graph.Edges.Remove(el);
                                 flag = true;
                                 break;
                             }
@@ -244,73 +239,11 @@ namespace GraphsWindowForms
             pictureBox1.Image = _bitmap;
         }
 
-        private void DFSchain(int u, int numberEndVertex, int[] color, string s)
-        {
-            if (u != numberEndVertex)
-            {
-                color[u] = 2;
-            }
-            else
-            {
-                _chainList.Add(s);
-                ListAllWaysListBox.Items.Add(s);
-                return;
-            }
-            foreach (var el in _edges)
-            {
-                if (color[_vertices.IndexOf(el.End)] == 1 && _vertices.IndexOf(el.Start) == u)
-                {
-                    AddChain(numberEndVertex, color, s, _vertices.IndexOf(el.End));
-                }
-                else if (color[_vertices.IndexOf(el.Start)] == 1 && _vertices.IndexOf(el.End) == u)
-                {
-                    AddChain(numberEndVertex, color, s, _vertices.IndexOf(el.Start));
-                }
-            }
-        }
-
-        private void AddChain(int endV, int[] color, string s, int numberVertex)
-        {
-            DFSchain(numberVertex, endV, color, s + (numberVertex + 1).ToString());
-            color[numberVertex] = 1;
-        }
-
         private void SearchAllWaysButton_Click(object sender, EventArgs e)
         {
-            _chainList.Clear();
-
-            int[] color = new int[_vertices.Count];
-            for (int i = 0; i < _vertices.Count - 1; i++)
-            {
-                for (int j = i + 1; j < _vertices.Count; j++)
-                {
-                    for (int k = 0; k < _vertices.Count; k++)
-                    {
-                        color[k] = 1;
-                    }
-
-                    DFSchain(i, j, color, (i + 1).ToString());
-                }
-            }
-
-            List<string> newChainList = new List<string>();
-            foreach (string i in _chainList)
-            {
-                if (i.StartsWith(StartVertexNumberTextBox.Text) && i.EndsWith(TargetVertexNumberTextBox.Text))
-                {
-                    newChainList.Add(i);
-                }
-                else if (i.EndsWith(StartVertexNumberTextBox.Text) && i.StartsWith(TargetVertexNumberTextBox.Text))
-                {
-                    char[] arr = i.ToCharArray();
-                    Array.Reverse(arr);
-                    string j = new string(arr);
-                    newChainList.Add(j);
-                }
-            }
-
             ListAllWaysListBox.Items.Clear();
-            foreach (string i in newChainList)
+            DFsUtil util = new DFsUtil();
+            foreach (string i in util.GetChains(_graph.Vertices, _graph.Edges, Convert.ToInt32(StartVertexNumberTextBox.Text), Convert.ToInt32(TargetVertexNumberTextBox.Text)))
             {
                 ListAllWaysListBox.Items.Add(i);
             }

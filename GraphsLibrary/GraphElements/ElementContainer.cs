@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace GraphsLibrary.Assets.Model.GraphElements
+namespace GraphsLibrary.GraphElements
 {
     public class ElementContainer<IElement> : IEnumerable<IElement>
     {

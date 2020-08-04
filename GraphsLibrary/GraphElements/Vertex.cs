@@ -1,6 +1,4 @@
-﻿using GraphsLibrary.Assets.Model.Utils;
-
-namespace GraphsLibrary.Assets.Model.GraphElements
+﻿namespace GraphsLibrary.GraphElements
 {
     public class Vertex : Element
     {
