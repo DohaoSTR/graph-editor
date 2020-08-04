@@ -23,8 +23,8 @@ namespace GraphsWindowForms
         private PointF _pointF;
         private const int R = 20;
 
-        private ElementContainer<Vertex> _vertices;
-        private ElementContainer<Edge> _edges;
+        private readonly ElementContainer<Vertex> _vertices;
+        private readonly ElementContainer<Edge> _edges;
 
         private AdjacencyMatrix Matrix
         {
@@ -76,22 +76,22 @@ namespace GraphsWindowForms
 
         private void DrawVertex(Vertex vertex)
         {
-            _graphics.FillEllipse(Brushes.White, (vertex.GetPoint.X - R), (vertex.GetPoint.Y - R), 2 * R, 2 * R);
-            _graphics.DrawEllipse(_blackPen, (vertex.GetPoint.X - R), (vertex.GetPoint.Y - R), 2 * R, 2 * R);
-            _pointF = new PointF(vertex.GetPoint.X - 9, vertex.GetPoint.Y - 9);
+            _graphics.FillEllipse(Brushes.White, (vertex.Point.X - R), (vertex.Point.Y - R), 2 * R, 2 * R);
+            _graphics.DrawEllipse(_blackPen, (vertex.Point.X - R), (vertex.Point.Y - R), 2 * R, 2 * R);
+            _pointF = new PointF(vertex.Point.X - 9, vertex.Point.Y - 9);
             _graphics.DrawString((_vertices.IndexOf(vertex) + 1).ToString(), _font, _brush, _pointF);
         }
 
         private void DrawEdge(Edge edge)
         {
-            _graphics.DrawLine(_darkGoldPen, edge.Start.GetPoint.X, edge.Start.GetPoint.Y, edge.End.GetPoint.X, edge.End.GetPoint.Y);
+            _graphics.DrawLine(_darkGoldPen, edge.Start.Point.X, edge.Start.Point.Y, edge.End.Point.X, edge.End.Point.Y);
             DrawVertex(edge.Start);
             DrawVertex(edge.End);
         }
 
         private void DrawLoop(Loop loop)
         {
-            _graphics.DrawArc(_darkGoldPen, loop.Start.GetPoint.X - 2 * R, loop.Start.GetPoint.Y - 2 * R, 2 * R, 2 * R, 90, 270);
+            _graphics.DrawArc(_darkGoldPen, loop.Start.Point.X - 2 * R, loop.Start.Point.Y - 2 * R, 2 * R, 2 * R, 90, 270);
             DrawVertex(loop.Start);
         }
 
@@ -130,19 +130,19 @@ namespace GraphsWindowForms
                 {
                     foreach (var el in _vertices)
                     {
-                        if (Math.Pow(el.GetPoint.X - e.X, 2) + Math.Pow(el.GetPoint.Y - e.Y, 2) <= R * R)
+                        if (Math.Pow(el.Point.X - e.X, 2) + Math.Pow(el.Point.Y - e.Y, 2) <= R * R)
                         {
                             if (_first == null)
                             {
                                 _first = el;
-                                _graphics.DrawEllipse(_redPen, el.GetPoint.X - R, el.GetPoint.Y - R, 2 * R, 2 * R);
+                                _graphics.DrawEllipse(_redPen, el.Point.X - R, el.Point.Y - R, 2 * R, 2 * R);
                                 pictureBox1.Image = _bitmap;
                                 break;
                             }
                             if (_second == null)
                             {
                                 _second = el;
-                                _graphics.DrawEllipse(_redPen, el.GetPoint.X - R, el.GetPoint.Y - R, 2 * R, 2 * R);
+                                _graphics.DrawEllipse(_redPen, el.Point.X - R, el.Point.Y - R, 2 * R, 2 * R);
 
                                 if (_first == _second)
                                 {
@@ -170,7 +170,7 @@ namespace GraphsWindowForms
 
                 foreach (var el in _vertices)
                 {
-                    if (Math.Pow(el.GetPoint.X - e.X, 2) + Math.Pow(el.GetPoint.Y - e.Y, 2) <= R * R)
+                    if (Math.Pow(el.Point.X - e.X, 2) + Math.Pow(el.Point.Y - e.Y, 2) <= R * R)
                     {
                         _vertices.Remove(el);
                         flag = true;
@@ -184,7 +184,7 @@ namespace GraphsWindowForms
                     {
                         if (el is Loop)
                         {
-                            if (Math.Pow(el.Start.GetPoint.X - R - e.X, 2) + Math.Pow(el.Start.GetPoint.Y - R - e.Y, 2) <= ((R + 2) * (R + 2)))
+                            if (Math.Pow(el.Start.Point.X - R - e.X, 2) + Math.Pow(el.Start.Point.Y - R - e.Y, 2) <= ((R + 2) * (R + 2)))
                             {
                                 _edges.Remove(el);
                                 flag = true;
@@ -193,7 +193,7 @@ namespace GraphsWindowForms
                         }
                         else
                         {
-                            float regionOfClick = (e.X - el.Start.GetPoint.X) * (el.End.GetPoint.Y - el.Start.GetPoint.Y) / (el.End.GetPoint.X - el.Start.GetPoint.X) + el.Start.GetPoint.Y;
+                            float regionOfClick = (e.X - el.Start.Point.X) * (el.End.Point.Y - el.Start.Point.Y) / (el.End.Point.X - el.Start.Point.X) + el.Start.Point.Y;
 
                             if (regionOfClick <= (e.Y + 4) && regionOfClick >= (e.Y - 4))
                             {

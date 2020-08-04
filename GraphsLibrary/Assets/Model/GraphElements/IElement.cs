@@ -1,4 +1,4 @@
-﻿namespace GraphModel.Assets.Model.GraphElements
+﻿namespace GraphsLibrary.Assets.Model.GraphElements
 {
     public interface IElement
     {

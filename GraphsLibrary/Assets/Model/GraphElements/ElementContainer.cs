@@ -6,6 +6,16 @@ namespace GraphsLibrary.Assets.Model.GraphElements
 {
     public class ElementContainer<IElement> : IEnumerable<IElement>
     {
+        private readonly List<IElement> _elements;
+
+        public ElementContainer() => _elements = new List<IElement>();
+
+        public ElementContainer(ICollection<IElement> elements) => _elements = (List<IElement>)elements;
+
+        public event Action<IElement> ElementAdded;
+
+        public event Action<IElement> ElementRemoved;
+
         public IEnumerator<IElement> GetEnumerator()
         {
             foreach (var element in _elements)
@@ -15,12 +25,6 @@ namespace GraphsLibrary.Assets.Model.GraphElements
         }
 
         IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)this).GetEnumerator();
-
-        public event Action<IElement> ElementAdded;
-
-        public event Action<IElement> ElementRemoved;
-
-        private readonly List<IElement> _elements;
 
         public IElement this[int index]
         {
@@ -35,10 +39,6 @@ namespace GraphsLibrary.Assets.Model.GraphElements
         }
 
         public int Count => _elements.Count;
-
-        public ElementContainer() => _elements = new List<IElement>();
-
-        public ElementContainer(List<IElement> elements) => _elements = elements;
 
         public void Add(IElement element)
         {
