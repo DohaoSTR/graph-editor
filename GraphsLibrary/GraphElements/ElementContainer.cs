@@ -26,6 +26,8 @@ namespace GraphsLibrary.GraphElements
 
         IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)this).GetEnumerator();
 
+        public int Count => _elements.Count;
+
         public Element this[int index]
         {
             set
@@ -37,8 +39,6 @@ namespace GraphsLibrary.GraphElements
                 return _elements[index];
             }
         }
-
-        public int Count => _elements.Count;
 
         public void Add(Element element)
         {

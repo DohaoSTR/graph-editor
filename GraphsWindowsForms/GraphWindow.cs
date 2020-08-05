@@ -21,20 +21,8 @@ namespace GraphsWindowForms
 
         private readonly Graph _graph;
 
-        private AdjacencyMatrix Matrix
-        {
-            get
-            {
-                return new AdjacencyMatrix(_graph.Vertices, _graph.Edges);
-            }
-        }
-
         private Vertex _first;
         private Vertex _second;
-
-        private int StartVertexNumber => Convert.ToInt32(StartVertexNumberTextBox.Text);
-
-        private int TargetVertexNumber => Convert.ToInt32(TargetVertexNumberTextBox.Text);
 
         public GraphWindow()
         {
@@ -67,6 +55,18 @@ namespace GraphsWindowForms
 
             pictureBox1.Image = _bitmap;
         }
+
+        private AdjacencyMatrix Matrix
+        {
+            get
+            {
+                return new AdjacencyMatrix(_graph.Vertices, _graph.Edges);
+            }
+        }
+
+        private int StartVertexNumber => Convert.ToInt32(StartVertexNumberTextBox.Text);
+
+        private int TargetVertexNumber => Convert.ToInt32(TargetVertexNumberTextBox.Text);
 
         private void DrawVertex(Vertex vertex)
         {

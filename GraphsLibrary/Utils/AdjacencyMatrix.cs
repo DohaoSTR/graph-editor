@@ -10,6 +10,18 @@ namespace GraphsLibrary.Utils
         private readonly ElementContainer<Vertex> _vertices;
         private readonly ElementContainer<Edge> _edges;
 
+        public AdjacencyMatrix(ElementContainer<Vertex> vertices, ElementContainer<Edge> edges)
+        {
+            _vertices = vertices;
+            _edges = edges;
+            _matrix = new int[vertices.Count, vertices.Count];
+
+            SetInitialValuesInMatrix();
+        }
+
+        public int Length => _vertices.Count;
+
+
         public int this[int indexVertex, int indexEdge]
         {
             set
@@ -21,34 +33,6 @@ namespace GraphsLibrary.Utils
                 return _matrix[indexVertex, indexEdge];
             }
         }
-
-        public AdjacencyMatrix(ElementContainer<Vertex> vertices, ElementContainer<Edge> edges)
-        {
-            _vertices = vertices;
-            _edges = edges;
-            _matrix = new int[vertices.Count, vertices.Count];
-
-            SetInitialValuesInMatrix();
-        }
-
-        private void SetInitialValuesInMatrix()
-        {
-            for (int indexVertex = 0; indexVertex < _vertices.Count; indexVertex++)
-            {
-                for (int indexEdge = 0; indexEdge < _vertices.Count; indexEdge++)
-                {
-                    _matrix[indexVertex, indexEdge] = 0;
-                }
-            }
-
-            foreach (var element in _edges)
-            {
-                _matrix[_vertices.IndexOf(element.Start), _vertices.IndexOf(element.End)] = 1;
-                _matrix[_vertices.IndexOf(element.End), _vertices.IndexOf(element.Start)] = 1;
-            }
-        }
-
-        public int Length => _vertices.Count;
 
         /// <summary>
         /// Ищет кратчайший путь с помощью волнового алгоритма.
@@ -93,6 +77,23 @@ namespace GraphsLibrary.Utils
                 }
             }
             throw new ArgumentNullException("Кратчайший путь не найден!");
+        }
+
+        private void SetInitialValuesInMatrix()
+        {
+            for (int indexVertex = 0; indexVertex < _vertices.Count; indexVertex++)
+            {
+                for (int indexEdge = 0; indexEdge < _vertices.Count; indexEdge++)
+                {
+                    _matrix[indexVertex, indexEdge] = 0;
+                }
+            }
+
+            foreach (var element in _edges)
+            {
+                _matrix[_vertices.IndexOf(element.Start), _vertices.IndexOf(element.End)] = 1;
+                _matrix[_vertices.IndexOf(element.End), _vertices.IndexOf(element.Start)] = 1;
+            }
         }
     }
 }
