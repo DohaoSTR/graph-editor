@@ -1,6 +1,6 @@
 ﻿namespace GraphsLibrary.GraphElements
 {
-    public class Edge : Element
+    public class Edge
     {
         public Edge(Vertex start, Vertex end)
         {

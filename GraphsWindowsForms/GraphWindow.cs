@@ -1,7 +1,6 @@
 ﻿using GraphsLibrary.GraphElements;
 using GraphsLibrary.Utils;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Point = GraphsLibrary.GraphElements.Point;

@@ -4,19 +4,19 @@ using System.Collections.Generic;
 
 namespace GraphsLibrary.GraphElements
 {
-    public class ElementContainer<IElement> : IEnumerable<IElement>
+    public class ElementContainer<Element> : IEnumerable<Element>
     {
-        private readonly List<IElement> _elements;
+        private readonly List<Element> _elements;
 
-        public ElementContainer() => _elements = new List<IElement>();
+        public ElementContainer() => _elements = new List<Element>();
 
-        public ElementContainer(ICollection<IElement> elements) => _elements = (List<IElement>)elements;
+        public ElementContainer(ICollection<Element> elements) => _elements = (List<Element>)elements;
 
-        public event Action<IElement> ElementAdded;
+        public event Action<Element> ElementAdded;
 
-        public event Action<IElement> ElementRemoved;
+        public event Action<Element> ElementRemoved;
 
-        public IEnumerator<IElement> GetEnumerator()
+        public IEnumerator<Element> GetEnumerator()
         {
             foreach (var element in _elements)
             {
@@ -26,7 +26,7 @@ namespace GraphsLibrary.GraphElements
 
         IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)this).GetEnumerator();
 
-        public IElement this[int index]
+        public Element this[int index]
         {
             set
             {
@@ -40,21 +40,21 @@ namespace GraphsLibrary.GraphElements
 
         public int Count => _elements.Count;
 
-        public void Add(IElement element)
+        public void Add(Element element)
         {
             _elements.Add(element);
             OnAddElement(element);
         }
 
-        public void Remove(IElement element)
+        public void Remove(Element element)
         {
             _elements.Remove(element);
             OnRemoveElement(element);
         }
 
-        public int IndexOf(IElement element) => _elements.IndexOf(element);
+        public int IndexOf(Element element) => _elements.IndexOf(element);
 
-        private void OnAddElement(IElement element)
+        private void OnAddElement(Element element)
         {
             if (ElementAdded == null)
             {
@@ -63,7 +63,7 @@ namespace GraphsLibrary.GraphElements
             ElementAdded(element);
         }
 
-        private void OnRemoveElement(IElement element)
+        private void OnRemoveElement(Element element)
         {
             if (ElementRemoved == null)
             {

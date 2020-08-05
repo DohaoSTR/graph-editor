@@ -1,6 +1,6 @@
 ﻿namespace GraphsLibrary.GraphElements
 {
-    public class Vertex : Element
+    public class Vertex
     {
         public Vertex(Point point) => Point = point;
 
