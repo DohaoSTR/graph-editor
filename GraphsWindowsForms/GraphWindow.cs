@@ -1,6 +1,7 @@
 ﻿using GraphsLibrary.GraphElements;
 using GraphsLibrary.Utils;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 using Point = GraphsLibrary.GraphElements.Point;
@@ -60,7 +61,7 @@ namespace GraphsWindowForms
         {
             get
             {
-                return new AdjacencyMatrix(_graph.Vertices, _graph.Edges);
+                return new AdjacencyMatrix((ICollection<Vertex>)_graph.Vertices, (ICollection<Edge>)_graph.Edges);
             }
         }
 

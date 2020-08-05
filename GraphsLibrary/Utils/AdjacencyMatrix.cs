@@ -1,5 +1,6 @@
 ﻿using GraphsLibrary.GraphElements;
 using System;
+using System.Collections.Generic;
 
 namespace GraphsLibrary.Utils
 {
@@ -7,20 +8,19 @@ namespace GraphsLibrary.Utils
     {
         private readonly int[,] _matrix;
 
-        private readonly ElementContainer<Vertex> _vertices;
-        private readonly ElementContainer<Edge> _edges;
+        private readonly List<Vertex> _vertices;
+        private readonly List<Edge> _edges;
 
-        public AdjacencyMatrix(ElementContainer<Vertex> vertices, ElementContainer<Edge> edges)
+        public AdjacencyMatrix(ICollection<Vertex> vertices, ICollection<Edge> edges)
         {
-            _vertices = vertices;
-            _edges = edges;
+            _vertices = (List<Vertex>)vertices;
+            _edges = (List<Edge>)edges;
             _matrix = new int[vertices.Count, vertices.Count];
 
             SetInitialValuesInMatrix();
         }
 
-        public int Length => _vertices.Count;
-
+        private int Length => _vertices.Count;
 
         public int this[int indexVertex, int indexEdge]
         {
